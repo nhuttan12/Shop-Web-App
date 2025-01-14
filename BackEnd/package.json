@@ -16,7 +16,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "start": "npx tsc && node dist/app.js",
-    "dev": "tsc -w & nodemon dist/app.js"
+    "start": "node dist/app.js",
+    "dev": "npx tsc && node dist/app.js"
   }
 }
