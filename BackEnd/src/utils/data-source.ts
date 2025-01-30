@@ -1,17 +1,21 @@
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
+import { join } from 'path';
+
+import { env } from '../configs/env.js';
 
 export const AppDataSource = new DataSource({
-  type: process.env.DB_DIALECT as 'mysql' | 'postgres' | 'sqlite' | 'mssql',
-  host: process.env.DB_HOST,
-  port: Number(process.env.DB_PORT),
-  username: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  database: process.env.DB_NAME,
-  synchronize: true,
+  type: env.DB_DIALECT as 'mysql' | 'postgres' | 'sqlite' | 'mssql',
+  host: env.DB_HOST,
+  port: Number(env.DB_PORT),
+  username: env.DB_USER,
+  password: env.DB_PASS,
+  database: env.DB_NAME,
+  dropSchema: env.STATUS==='development',
+  synchronize: env.STATUS==='development',
   logging: true,
-  entities: ['src/entities/*.ts'],
-  migrations: ['src/migration/*.ts'],
+  entities: [join(process.cwd(), 'src', 'entities', '*.ts')],
+  migrations: [join(process.cwd(), 'src', 'migration', '*.ts')],
   subscribers: [],
 });
 

@@ -1,9 +1,10 @@
-import 'dotenv/config';
 import "reflect-metadata";
-import {AppDataSource} from './utils/data-source.js';
 
 import express, { Application } from 'express';
 import bodyParser from 'body-parser';
+
+import {env} from './configs/env.js';
+import {AppDataSource} from './utils/data-source.js';
 
 const app: Application = express();
 
@@ -14,8 +15,8 @@ const startServer = async (): Promise<void> => {
     await AppDataSource.initialize();
     console.log('Db connected');
 
-    app.listen(process.env.SERVER_PORT, () => {
-      console.log(`Server running in ${process.env.SERVER_PORT}`);
+    app.listen(env.SERVER_PORT, () => {
+      console.log(`Server running in ${env.SERVER_PORT}`);
     });
   } catch (error) {
     console.error('Error in: ', error);
