@@ -1,10 +1,11 @@
 import { Entity } from 'typeorm/decorator/entity/Entity.js';
 import { Column } from 'typeorm/decorator/columns/Column.js';
 import { ManyToOne } from 'typeorm/decorator/relations/ManyToOne.js';
-import { Category } from './Category.js';
 import { JoinColumn } from 'typeorm/decorator/relations/JoinColumn.js';
-import { Status } from './Status.js';
 import { BaseEntity } from './BaseEntity.js';
+import { Relation } from 'typeorm';
+import { Category } from './Category.js';
+import { Status } from './Status.js';
 
 @Entity('products')
 export class Product extends BaseEntity {
@@ -20,11 +21,11 @@ export class Product extends BaseEntity {
   @Column({ type: 'text' })
   imageUrl!: string;
 
-  @ManyToOne(() => Category, (category: Category) => category.products)
+  @ManyToOne(() => Category, (category) => category.products)
   @JoinColumn({ name: 'categoryId' })
-  category!: Category;
+  category!: Relation<Category>;
 
-  @ManyToOne(() => Status, (status: Status) => status.products)
+  @ManyToOne(() => Status, (status) => status.products)
   @JoinColumn({ name: 'statusId' })
-  status!: Status;
+  status!: Relation<Status>;
 }

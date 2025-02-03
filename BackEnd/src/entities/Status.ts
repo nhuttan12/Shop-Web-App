@@ -1,22 +1,23 @@
 import { Entity } from 'typeorm/decorator/entity/Entity.js';
 import { OneToMany } from 'typeorm/decorator/relations/OneToMany.js';
-import { Role } from './Role.js';
+import { BaseEntity } from './BaseEntity.js';
 import { Category } from './Category.js';
+import { Role } from './Role.js';
 import { User } from './User.js';
 import { Product } from './Product.js';
-import { BaseEntity } from './BaseEntity.js';
+import { Relation } from 'typeorm';
 
 @Entity('status')
 export class Status extends BaseEntity{
-  @OneToMany(() => Role, (role: Role) => role.status)
-  roles!: Role[];
+  @OneToMany(() => Role, (role) => role.status)
+  roles!: Relation<Role[]>;
 
-  @OneToMany(() => Category, (category: Category) => category.status)
-  categories!: Category[];
+  @OneToMany(() => Category, (category) => category.status)
+  categories!: Relation<Category[]>;
 
-  @OneToMany(() => User, (user: User) => user.status)
-  users!: User[];
+  @OneToMany(() => User, (user) => user.status)
+  users!: Relation<User[]>;
 
-  @OneToMany(()=>Product, (product: Product)=>product.status)
-  products!: Product[];
+  @OneToMany(()=>Product, (product)=>product.status)
+  products!: Relation<Product[]>;
 }

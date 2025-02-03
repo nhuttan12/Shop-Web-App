@@ -9,14 +9,18 @@ export const AppDataSource = new DataSource({
   host: env.DB_HOST,
   port: Number(env.DB_PORT),
   username: env.DB_USER,
-  password: env.DB_PASS,
+  password: env.DB_PASSWORD,
   database: env.DB_NAME,
-  dropSchema: env.STATUS==='development',
-  synchronize: env.STATUS==='development',
+  dropSchema: false,
+  synchronize: false,
   logging: true,
   entities: [join(process.cwd(), 'src', 'entities', '*.ts')],
-  migrations: [join(process.cwd(), 'src', 'migration', '*.ts')],
+  migrations: [join(process.cwd(), 'src', 'migrations', '*.ts')],
   subscribers: [],
+  extra: {
+    connectionLimit: 10,
+    connectTimeout: 600000,
+  }
 });
 
 AppDataSource.initialize()

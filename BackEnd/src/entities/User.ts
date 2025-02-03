@@ -1,10 +1,11 @@
 import { Entity } from 'typeorm/decorator/entity/Entity.js';
 import { Column } from 'typeorm/decorator/columns/Column.js';
 import { ManyToOne } from 'typeorm/decorator/relations/ManyToOne.js';
-import { Status } from './Status.js';
 import { JoinColumn } from 'typeorm/decorator/relations/JoinColumn.js';
 import { Role } from './Role.js';
 import { BaseEntity } from './BaseEntity.js';
+import { Status } from './Status.js';
+import { Relation } from 'typeorm';
 
 @Entity('users')
 export class User extends BaseEntity{
@@ -17,11 +18,11 @@ export class User extends BaseEntity{
   @Column({ type: 'varchar', length: 255 })
   email!: string;
 
-  @ManyToOne(() => Status, (status: Status) => status.users)
+  @ManyToOne(() => Status, (status) => status.users)
   @JoinColumn({ name: 'statusId' })
-  status!: Status;
+  status!: Relation<Status>;
 
-  @ManyToOne(() => Role, (role: Role) => role.users)
+  @ManyToOne(() => Role, (role) => role.users)
   @JoinColumn({ name: 'roleId' })
-  role!: Role;
+  role!: Relation<Role>;
 }
