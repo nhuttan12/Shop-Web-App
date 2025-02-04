@@ -2,7 +2,6 @@ import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
 export class CreateRoleTable1738517900510 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.startTransaction();
     try {
       const roleTable = await queryRunner.hasTable('roles');
       if (!roleTable) {
@@ -20,6 +19,10 @@ export class CreateRoleTable1738517900510 implements MigrationInterface {
                 name: 'name',
                 type: 'varchar',
                 length: '255',
+              },
+              {
+                name: 'statusId',
+                type: 'int',
               },
               {
                 name: 'createdAt',
@@ -70,7 +73,7 @@ export class CreateRoleTable1738517900510 implements MigrationInterface {
         );
       }
 
-      const categoriesTable = await queryRunner.hasTable('status');
+      const categoriesTable = await queryRunner.hasTable('categories');
       if (!categoriesTable) {
         await queryRunner.createTable(
           new Table({
@@ -93,6 +96,10 @@ export class CreateRoleTable1738517900510 implements MigrationInterface {
                 length: '255',
               },
               {
+                name: 'statusId',
+                type: 'int',
+              },
+              {
                 name: 'createdAt',
                 type: 'timestamp',
                 default: 'CURRENT_TIMESTAMP',
@@ -108,7 +115,7 @@ export class CreateRoleTable1738517900510 implements MigrationInterface {
         );
       }
 
-      const productsTable = await queryRunner.hasTable('status');
+      const productsTable = await queryRunner.hasTable('products');
       if (!productsTable) {
         await queryRunner.createTable(
           new Table({
@@ -145,6 +152,14 @@ export class CreateRoleTable1738517900510 implements MigrationInterface {
                 type: 'text',
               },
               {
+                name: 'categoryId',
+                type: 'int',
+              },
+              {
+                name: 'statusId',
+                type: 'int',
+              },
+              {
                 name: 'createdAt',
                 type: 'timestamp',
                 default: 'CURRENT_TIMESTAMP',
@@ -160,7 +175,7 @@ export class CreateRoleTable1738517900510 implements MigrationInterface {
         );
       }
 
-      const usersTable = await queryRunner.hasTable('status');
+      const usersTable = await queryRunner.hasTable('users');
       if (!usersTable) {
         await queryRunner.createTable(
           new Table({
@@ -193,6 +208,14 @@ export class CreateRoleTable1738517900510 implements MigrationInterface {
                 length: '255',
               },
               {
+                name: 'roleId',
+                type: 'int',
+              },
+              {
+                name: 'statusId',
+                type: 'int',
+              },
+              {
                 name: 'createdAt',
                 type: 'timestamp',
                 default: 'CURRENT_TIMESTAMP',
@@ -207,10 +230,7 @@ export class CreateRoleTable1738517900510 implements MigrationInterface {
           })
         );
       }
-      
-      await queryRunner.commitTransaction();
     } catch (error) {
-      await queryRunner.rollbackTransaction();
       console.error('Migration failed:', error);
       throw error;
     }

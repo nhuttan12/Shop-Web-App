@@ -1,90 +1,72 @@
-import { MigrationInterface, QueryRunner, TableColumn, TableForeignKey } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  TableColumn,
+  TableForeignKey,
+} from 'typeorm';
 
 export class UpadateRelation11738574623067 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.startTransaction();
     try {
-      //get category table name
+      //CATEGORY TABLE
       const categoryTable = await queryRunner.getTable('categories');
       //check exist foreign key status id of category table
       if (categoryTable) {
-        const categoryFk = categoryTable.foreignKeys.find(fk =>
-          fk.columnNames.includes('statusId')
-        );
-        //drop foreign key
-        if (categoryFk) {
-          await queryRunner.dropForeignKey('categories', categoryFk);
+        //searching category fk
+        const categoryFk  = categoryTable.foreignKeys.find(
+          fk => fk.columnNames.includes('statusId')
+        )
+        if(!categoryFk){
+          //create foreign key status id of category table
+          await queryRunner.createForeignKey(
+            'categories',
+            new TableForeignKey({
+              columnNames: ['statusId'],
+              referencedTableName: 'status',
+              referencedColumnNames: ['id'],
+              onDelete: 'CASCADE',
+            })
+          );
         }
       }
-      //check statusId exist in category table
-      const statusIdFkCategory = categoryTable?.columns.find(column=>
-        column.name==='statusId'
-      );
-      //adding statusId column
-      if(!statusIdFkCategory){
-        await queryRunner.addColumn(
-          'categories',
-          new TableColumn({
-            name: 'statusId',
-            type: 'int',
-          })
-        )
-      }
-      //create foreign key status id of category table
-      await queryRunner.createForeignKey(
-        'categories',
-        new TableForeignKey({
-          columnNames: ['statusId'],
-          referencedTableName: 'status',
-          referencedColumnNames: ['id'],
-          onDelete: 'CASCADE',
-        })
-      );
 
-      //get product table name
+      //PRODUCT TABLE
       const productTable = await queryRunner.getTable('products');
       if (productTable) {
         //check foreign key exist of product table
-        const productFks = productTable.foreignKeys.filter(fk => {
-          fk.columnNames.includes('categoryId') ||
-            fk.columnNames.includes('statusId');
-        });
-        //drop foreign key
-        for(const fk of productFks){
-          await queryRunner.dropForeignKey('products', fk);
+        const categoryFk = productTable.foreignKeys.some(
+          fk => fk.columnNames.includes('categoryId')
+        );
+        const statusFk=productTable.foreignKeys.some(
+          fk => fk.columnNames.includes('statusId')
+        );
+        const foreignKeysToAdd: TableForeignKey[] = [];
+        if(!categoryFk){
+          foreignKeysToAdd.push(
+            new TableForeignKey({
+              columnNames: ['categoryId'],
+              referencedTableName: 'categories',
+              referencedColumnNames: ['id'],
+              onDelete: 'CASCADE',
+            })
+          )
         }
+        if(!statusFk){
+          foreignKeysToAdd.push(
+            new TableForeignKey({
+              columnNames: ['statusId'],
+              referencedTableName: 'status',
+              referencedColumnNames: ['id'],
+              onDelete: 'CASCADE',
+            }),
+          )
+        }
+        //create foreign keys statusId and categoryId of product table
+        await queryRunner.createForeignKeys('products', foreignKeysToAdd);
       }
-      //check statusId exist in category table
-      const statusIdFkProduct = categoryTable?.columns.filter(column=>
-        column.name==='statusId'
-      );
-      //adding statusId column
-      if(!statusIdFkCategory){
-        await queryRunner.addColumn(
-          'categories',
-          new TableColumn({
-            name: 'statusId',
-            type: 'int',
-          })
-        )
-      }
-      //create foreign keys statusId and categoryId of product table
-      await queryRunner.createForeignKeys('products', [
-        new TableForeignKey({
-          columnNames: ['categoryId'],
-          referencedTableName: 'categories',
-          referencedColumnNames: ['id'],
-          onDelete: 'CASCADE',
-        }),
-        new TableForeignKey({
-          columnNames: ['statusId'],
-          referencedTableName: 'status',
-          referencedColumnNames: ['id'],
-          onDelete: 'CASCADE',
-        }),
-      ]);
 
-      //get role table 
+      //ROLE TABLE
+      //get role table
       const roleTable = await queryRunner.getTable('roles');
       if (roleTable) {
         //get foreign keys statusId of role table
@@ -94,54 +76,59 @@ export class UpadateRelation11738574623067 implements MigrationInterface {
         if (roleFk) {
           await queryRunner.dropForeignKey('roles', roleFk);
         }
+        //create foreign key statusId of role table
+        await queryRunner.createForeignKey(
+          'roles',
+          new TableForeignKey({
+            columnNames: ['statusId'],
+            referencedTableName: 'status',
+            referencedColumnNames: ['id'],
+            onDelete: 'CASCADE',
+          })
+        );
       }
-      //create foreign key statusId of role table
-      await queryRunner.createForeignKey(
-        'roles',
-        new TableForeignKey({
-          columnNames: ['statusId'],
-          referencedTableName: 'status',
-          referencedColumnNames: ['id'],
-          onDelete: 'CASCADE',
-        })
-      );
 
+      //USER TABLE
       //get user table
       const userTable = await queryRunner.getTable('users');
       if (userTable) {
         //check exist foreign key of user table
-        const userFks=userTable.foreignKeys.filter(fk=>
-          fk.columnNames.includes('roleId') ||
-            fk.columnNames.includes('statusId')
+        const roleFk = userTable.foreignKeys.some(
+          fk => fk.columnNames.includes('roleId')
         );
-        //drop foreign key
-        for(const fk of userFks){
-          await queryRunner.dropForeignKey('users', fk);
+        const statusFk=userTable.foreignKeys.some(
+          fk => fk.columnNames.includes('statusId')
+        );
+        const foreignKeysToAdd: TableForeignKey[] = [];
+        if(!roleFk){
+          foreignKeysToAdd.push(
+            new TableForeignKey({
+              columnNames: ['statusId'],
+              referencedTableName: 'status',
+              referencedColumnNames: ['id'],
+              onDelete: 'CASCADE',
+            })
+          );
         }
+        if(!statusFk){
+          foreignKeysToAdd.push(
+            new TableForeignKey({
+              columnNames: ['roleId'],
+              referencedTableName: 'roles',
+              referencedColumnNames: ['id'],
+              onDelete: 'CASCADE',
+            })
+          );
+        }
+        // Create new foreign key for 'roleId'
+        await queryRunner.createForeignKeys('users', foreignKeysToAdd);
       }
-      //create foreign keys statusId and roleId of user table
-      await queryRunner.createForeignKeys('users', [
-        new TableForeignKey({
-          columnNames: ['statusId'],
-          referencedTableName: 'status',
-          referencedColumnNames: ['id'],
-          onDelete: 'CASCADE',
-        }),
-        new TableForeignKey({
-          columnNames: ['roleId'],
-          referencedTableName: 'roles',
-          referencedColumnNames: ['id'],
-          onDelete: 'CASCADE',
-        }),
-      ]);
-
-      await queryRunner.commitTransaction();
     } catch (error) {
-      await queryRunner.rollbackTransaction();
       console.error('Migration failed:', error);
       throw error;
     }
   }
 
-  public async down(queryRunner: QueryRunner): Promise<void> {}
+  public async down(queryRunner: QueryRunner): Promise<void> {
+  }
 }
