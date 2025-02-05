@@ -10,8 +10,8 @@ export abstract class BaseEntity extends TypeORMBaseEntity {
   name!: string;
 
   @Column({ type: 'datetime' })
-  createAt!: Date;
+  createdAt!: Date;
 
   @Column({ type: 'datetime' })
-  updateAt?: Date;
+  updatedAt?: Date;
 }
