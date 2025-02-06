@@ -11,7 +11,7 @@ export class AuthController {
         username,
         email,
         password,
-        retypePassword
+        retypePassword,
       });
 
       res
