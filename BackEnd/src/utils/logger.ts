@@ -11,7 +11,7 @@ const logFormat=winston.format.combine(
 
 //print to console for log's level is info level up
 const consoleTransport=new winston.transports.Console({
-  level:'info',
+  level:'silly',
 });
 
 //write to file for log's level is info level up
