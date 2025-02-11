@@ -9,7 +9,9 @@ export class SignUpController {
     try {
       //get username, email, password, retypePassword from request
       const { username, email, password, retypePassword } = req.body;
-      logger.info(`Sign up request ${username}, ${email}, ${password}, ${retypePassword}`);
+      logger.info(
+        `Sign up request ${username}, ${email}, ${password}, ${retypePassword}`
+      );
 
       //sign up with username, email, password, retypePassword
       const result: User = await SignUpService.signUp({

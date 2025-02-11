@@ -12,26 +12,25 @@ export class SignUpService {
     try {
       //get data from schema of zod
       const parsedData = signUpSchema.parse(data);
-      logger.data(`Parsed data ${parsedData}`);
+      logger.debug(`Parsed data ${parsedData}`);
 
       //check existing user
       const existingUser: User | null = await AppDataSource.getRepository(
         User
-      ).findOneBy({
-        email: parsedData.email,
-        username: parsedData.username,
+      ).findOne({
+        where: [{ username: parsedData.username }, { email: parsedData.email }],
       });
-      logger.info(`Checking exist user ${existingUser}`);
+      logger.debug(`Checking exist user ${existingUser}`);
 
       //throw error if user exists
       if (existingUser) {
         logger.info(`User already exists ${existingUser}`);
-        throw new Error('User already exists');
+        throw new Error('Tài khoản đã tồn tại');
       }
 
       //create hashed password
       const hashedPassword: string = await bcrypt.hash(parsedData.password, 10);
-      logger.data(`Create hashed password for user ${parsedData.username}`);
+      logger.debug(`Create hashed password for user ${parsedData.username}`);
 
       //get role has name's 'user'
       const role: Role | null = await AppDataSource.getRepository(
@@ -39,7 +38,7 @@ export class SignUpService {
       ).findOneBy({
         name: 'user',
       });
-      logger.info(`Get role ${role}`);
+      logger.debug(`Get role ${role}`);
 
       //get status has name's 'active'
       const status: Status | null = await AppDataSource.getRepository(
@@ -47,12 +46,12 @@ export class SignUpService {
       ).findOneBy({
         name: 'active',
       });
-      logger.info(`Get status ${status}`);
+      logger.debug(`Get status ${status}`);
 
       //checking role or status null
       if (!role || !status) {
         logger.error(`Can't find role or status`);
-        throw new Error('Error in creating user, please try again');
+        throw new Error('Đã xảy ra lỗi trong quá trình tạo tài khoản, vui lòng thử lại');
       }
 
       //create user
@@ -63,19 +62,19 @@ export class SignUpService {
       user.name = 'Người dùng';
       user.role = role;
       user.status = status;
-      logger.info(`User's info ${user}`);
+      logger.debug(`User's info ${user}`);
 
       //save user to database
       const result: User = await AppDataSource.getRepository(User).save(user);
 
       //update user's name concat id
       result.name = `${result.name} (${result.id})`;
-      logger.info(`Update user's name ${result}`);
+      logger.debug(`Update user's name ${result}`);
       await AppDataSource.getRepository(User).save(result);
 
       return result;
     } catch (error: any) {
-      logger.error(`Error in sign up service ${error}`);
+      logger.error(`Đã có lỗi xảy ra ${error}`);
       throw error;
     }
   }
