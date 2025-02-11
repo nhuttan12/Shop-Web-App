@@ -24,5 +24,5 @@ export const AppDataSource = new DataSource({
 });
 
 AppDataSource.initialize()
-  .then(() => console.log('Db connected'))
-  .catch(() => console.log('Db error connection'));
+  .then(() => console.log('Database initialized'))
+  .catch(() => console.log('Database not initialized  '));
