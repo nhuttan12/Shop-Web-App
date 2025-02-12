@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import { NextFunction, Request, Response, Router } from 'express';
 
 import { SignUpController } from '../controllers/auth/sign-up-controller.js';
-import { signInSchema } from '../services/auth/sign-in/sign-in-schema.js';
+import { signInSchema } from '../zod-schema/auth-schema/sign-in-schema.js';
 import passport from 'passport';
 import { env } from '../configs/env.js';
 import logger from '../utils/logger.js';

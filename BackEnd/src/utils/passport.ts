@@ -1,10 +1,10 @@
-import passport from 'passport';
-import { Strategy as LocalStrategy } from 'passport-local';
 import bcrypt from 'bcrypt';
+import passport from 'passport';
+import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt';
+import { Strategy as LocalStrategy } from 'passport-local';
 
-import { AppDataSource } from './data-source.js';
+import { env } from '../configs/env.js';
 import { User } from '../entities/User.js';
-import { Repository } from 'typeorm';
 import logger from './logger.js';
 
 passport.use(
@@ -16,13 +16,8 @@ passport.use(
     },
     async (username: string, password: string, done) => {
       try {
-        //Get user repository
-        const userRepo: Repository<User> =
-          await AppDataSource.getRepository('User');
-        logger.silly('Get user repository');
-
         //Find user by username with status is active
-        const user: User | null = await userRepo.findOne({
+        const user: User | null = await User.findOne({
           where: {
             username,
             status: {
@@ -32,16 +27,16 @@ passport.use(
         });
         logger.debug(`Find user by username ${user}`);
 
-        const userBanned: User|null=await userRepo.findOne({
-          where:{
+        const userBanned: User | null = await User.findOne({
+          where: {
             username,
-            status:{
+            status: {
               id: 4, // status banned
-            }
-          }
+            },
+          },
         });
 
-        if(userBanned){
+        if (userBanned) {
           logger.info('User is banned');
           return done(null, false, { message: 'Tài khoản đã bị khóa' });
         }
@@ -66,11 +61,38 @@ passport.use(
         logger.info(`User ${user.username} logged in`);
         return done(null, user);
       } catch (error) {
-
         //Throw error
         logger.error('Error in login', error);
         return done(error);
       }
     }
   )
+);
+
+const jwtOptions = {
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: env.JWT_SECRET,
+};
+
+passport.use(
+  new JwtStrategy(jwtOptions, async (jwt_payload, done) => {
+    try {
+      //Find user 
+      const user: User | null = await User.findOne({
+        where: { id: jwt_payload.id },
+      });
+      logger.debug(`Find user ${user}`);
+
+      //Checking user exist
+      if (user) {
+        return done(null, user);
+      } else {
+        return done(null, false);
+      }
+    } catch (error) {
+
+      //Throw error
+      return done(error);
+    }
+  })
 );
