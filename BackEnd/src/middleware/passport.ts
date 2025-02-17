@@ -5,7 +5,8 @@ import { Strategy as LocalStrategy } from 'passport-local';
 
 import { env } from '../configs/env.js';
 import { User } from '../entities/User.js';
-import logger from './logger.js';
+import logger from '../utils/logger.js';
+import { messageLog } from '../utils/message-handling.js';
 
 passport.use(
   new LocalStrategy(
@@ -38,13 +39,13 @@ passport.use(
 
         if (userBanned) {
           logger.info('User is banned');
-          return done(null, false, { message: 'Tài khoản đã bị khóa' });
+          return done(null, false, { message: messageLog.userBanned });
         }
 
         //Check if user exists
         if (!user) {
           logger.info('User not found');
-          return done(null, false, { message: 'Tài khoản không tồn tại' });
+          return done(null, false, { message: messageLog.userNotExist });
         }
 
         //Check if user password is matches
@@ -54,7 +55,7 @@ passport.use(
         //If password does not match, return false
         if (!isMatch) {
           logger.info('Password is incorrect');
-          return done(null, false, { message: 'Sai tài khoản hoặc mật khẩu' });
+          return done(null, false, { message: messageLog.invalidUsernameOrPassword });
         }
 
         //If password matches, return user
@@ -85,8 +86,10 @@ passport.use(
 
       //Checking user exist
       if (user) {
+        logger.silly('returning user');
         return done(null, user);
       } else {
+        logger.silly('returning false');
         return done(null, false);
       }
     } catch (error) {
