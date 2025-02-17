@@ -8,6 +8,7 @@ import {
   signUpInput,
   signUpSchema,
 } from '../../../zod-schema/auth-schema/sign-up-shcema.js';
+import { messageLog } from '../../../utils/message-handling.js';
 
 export class SignUpService {
   static async signUp(data: signUpInput) {
@@ -25,7 +26,7 @@ export class SignUpService {
       //throw error if user exists
       if (existingUser) {
         logger.info(`User already exists ${existingUser}`);
-        throw new Error('Tài khoản đã tồn tại');
+        throw new Error(messageLog.usernameAlreadyExist);
       }
 
       //create hashed password
@@ -47,9 +48,7 @@ export class SignUpService {
       //checking role or status null
       if (!role || !status) {
         logger.error(`Can't find role or status`);
-        throw new Error(
-          'Đã xảy ra lỗi trong quá trình tạo tài khoản, vui lòng thử lại'
-        );
+        throw new Error(messageLog.errorInCreateAccount);
       }
 
       //create user

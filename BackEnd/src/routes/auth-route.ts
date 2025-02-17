@@ -6,6 +6,7 @@ import { signInSchema } from '../zod-schema/auth-schema/sign-in-schema.js';
 import passport from 'passport';
 import { env } from '../configs/env.js';
 import logger from '../utils/logger.js';
+import { messageLog } from '../utils/message-handling.js';
 
 const router = Router();
 
@@ -26,7 +27,6 @@ router.post('/sign-in', (req: Request, res: Response, next: NextFunction) => {
     'local',
     { session: false },
     (err: any, user: any, info: any) => {
-
       //Error
       if (err) {
         logger.error(`Error: ${err.message}`);
@@ -34,20 +34,22 @@ router.post('/sign-in', (req: Request, res: Response, next: NextFunction) => {
       }
 
       //User not found
-      if (!user){
+      if (!user) {
         logger.info(`Invalid credentials`);
-        return next(new Error(info?.message||'Tài khoản hoặc mật khẩu không tồn tại'));
+        return next(
+          new Error(info?.message || messageLog.invalidUsernameOrPassword)
+        );
       }
 
       //Generate token
       logger.info(`Generate token`);
-      const token:string = jwt.sign({ id: user.id }, env.JWT_SECRET, {
+      const token: string = jwt.sign({ id: user.id }, env.JWT_SECRET, {
         expiresIn: '1h',
       });
 
-      res.json({ message: 'Đăng nhập thành công', token: token });
+      res.json({ message: messageLog.logInSuccessfully, token: token });
     }
   )(req, res, next);
 });
 
-export { router }
+export { router };
