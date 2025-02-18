@@ -13,6 +13,9 @@ const errorInCreateAccount: string =
 const userIsnotAuthorized: string = 'Người dùng chưa được xác thực';
 const userIsNotAllowedToPerformAction: string =
   'Bạn không có quyền thực hiện hành động này';
+const internalServerError: string = 'Internal Server Error';
+const databaseInitialize: string='Database initialized';
+const databaseNotInitialize: string='Database not initialized';
 
 export const messageLog = {
   userCreateSuccess,
@@ -25,4 +28,7 @@ export const messageLog = {
   errorInCreateAccount,
   userIsnotAuthorized,
   userIsNotAllowedToPerformAction,
+  internalServerError,
+  databaseInitialize,
+  databaseNotInitialize
 };

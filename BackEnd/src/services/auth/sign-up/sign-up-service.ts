@@ -9,6 +9,7 @@ import {
   signUpSchema,
 } from '../../../zod-schema/auth-schema/sign-up-shcema.js';
 import { messageLog } from '../../../utils/message-handling.js';
+import { ErrorHandler } from '../../../utils/error-handling.js';
 
 export class SignUpService {
   static async signUp(data: signUpInput) {
@@ -26,7 +27,7 @@ export class SignUpService {
       //throw error if user exists
       if (existingUser) {
         logger.info(`User already exists ${existingUser}`);
-        throw new Error(messageLog.usernameAlreadyExist);
+        throw new ErrorHandler(messageLog.usernameAlreadyExist, 406);
       }
 
       //create hashed password
@@ -48,7 +49,7 @@ export class SignUpService {
       //checking role or status null
       if (!role || !status) {
         logger.error(`Can't find role or status`);
-        throw new Error(messageLog.errorInCreateAccount);
+        throw new ErrorHandler(messageLog.errorInCreateAccount, 404);
       }
 
       //create user

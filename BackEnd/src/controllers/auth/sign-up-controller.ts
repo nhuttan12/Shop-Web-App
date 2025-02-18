@@ -10,7 +10,7 @@ export class SignUpController {
     try {
       //get username, email, password, retypePassword from request
       const { username, email, password, retypePassword } = req.body;
-      logger.info(
+      logger.debug(
         `Sign up request ${username}, ${email}, ${password}, ${retypePassword}`
       );
 
@@ -27,7 +27,7 @@ export class SignUpController {
         .status(201)
         .json({ message: messageLog.userCreateSuccess, data: result });
     } catch (error: any) {
-      logger.error(`Error in sign up controller ${error}`);
+      logger.error(`Error in sign-up-controller ${error}`);
       next(error);
     }
   }

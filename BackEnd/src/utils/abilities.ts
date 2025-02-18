@@ -1,13 +1,13 @@
 import { AbilityBuilder, createMongoAbility } from '@casl/ability';
 import { User } from '../entities/User.js';
-
-// type Actions = 'manage' | 'create' | 'read' | 'update' | 'delete';
-// type Subjects = 'all' | 'User' | 'Product';
+import logger from './logger.js';
 
 export type AppAbility = ReturnType<typeof createMongoAbility>;
 
 export function defineAbilitiesFor(user: User): AppAbility {
   const { can, cannot, build } = new AbilityBuilder(createMongoAbility);
+  
+  logger.silly('Checking user role is admin or mod or user');
   if (user.role.name === 'admin') {
     //admin can mange all permissions
     can('manage', 'all');
