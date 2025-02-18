@@ -19,4 +19,5 @@ export const env={
   SERVER_PORT: Number(process.env.SERVER_PORT!),
   STATUS: process.env.STATUS!,
   JWT_SECRET: process.env.JWT_SECRET!,
+  REFRESH_TOKEN_PRIVATE_KEY: process.env.REFRESH_TOKEN_PRIVATE_KEY!,
 }
