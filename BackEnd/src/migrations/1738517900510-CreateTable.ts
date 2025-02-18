@@ -272,7 +272,7 @@ export class CreateRoleTable1738517900510 implements MigrationInterface {
 
       logger.debug('Create tokens table if not exist');
       const tokenTable = await queryRunner.hasTable('tokens');
-      if(!tokenTable){
+      if (!tokenTable) {
         await queryRunner.createTable(
           new Table({
             name: 'tokens',

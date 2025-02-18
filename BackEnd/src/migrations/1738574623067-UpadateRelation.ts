@@ -1,9 +1,4 @@
-import {
-  MigrationInterface,
-  QueryRunner,
-  TableColumn,
-  TableForeignKey,
-} from 'typeorm';
+import { MigrationInterface, QueryRunner, TableForeignKey } from 'typeorm';
 import logger from '../utils/logger.js';
 
 export class UpadateRelation11738574623067 implements MigrationInterface {
@@ -15,11 +10,11 @@ export class UpadateRelation11738574623067 implements MigrationInterface {
       //check exist foreign key status id of category table
       if (categoryTable) {
         //searching category fk
-        const categoryFk  = categoryTable.foreignKeys.find(
-          fk => fk.columnNames.includes('statusId')
-        )
+        const categoryFk = categoryTable.foreignKeys.find(fk =>
+          fk.columnNames.includes('statusId')
+        );
 
-        if(!categoryFk){
+        if (!categoryFk) {
           //create foreign key status id of category table
           await queryRunner.createForeignKey(
             'categories',
@@ -37,16 +32,16 @@ export class UpadateRelation11738574623067 implements MigrationInterface {
       const productTable = await queryRunner.getTable('products');
       if (productTable) {
         //check foreign key exist of product table
-        const categoryFk = productTable.foreignKeys.some(
-          fk => fk.columnNames.includes('categoryId')
+        const categoryFk = productTable.foreignKeys.some(fk =>
+          fk.columnNames.includes('categoryId')
         );
-        const statusFk=productTable.foreignKeys.some(
-          fk => fk.columnNames.includes('statusId')
+        const statusFk = productTable.foreignKeys.some(fk =>
+          fk.columnNames.includes('statusId')
         );
         const foreignKeysToAdd: TableForeignKey[] = [];
 
         logger.silly('Adding foreign keys to category table if not exist');
-        if(!categoryFk){
+        if (!categoryFk) {
           foreignKeysToAdd.push(
             new TableForeignKey({
               columnNames: ['categoryId'],
@@ -54,19 +49,19 @@ export class UpadateRelation11738574623067 implements MigrationInterface {
               referencedColumnNames: ['id'],
               onDelete: 'CASCADE',
             })
-          )
+          );
         }
 
         logger.silly('Adding foreign keys to status table if not exist');
-        if(!statusFk){
+        if (!statusFk) {
           foreignKeysToAdd.push(
             new TableForeignKey({
               columnNames: ['statusId'],
               referencedTableName: 'status',
               referencedColumnNames: ['id'],
               onDelete: 'CASCADE',
-            }),
-          )
+            })
+          );
         }
 
         //create foreign keys statusId and categoryId of product table
@@ -103,16 +98,16 @@ export class UpadateRelation11738574623067 implements MigrationInterface {
       if (userTable) {
         //check exist foreign key of user table
         logger.silly('Check exist foreign key of user table');
-        const roleFk = userTable.foreignKeys.some(
-          fk => fk.columnNames.includes('roleId')
+        const roleFk = userTable.foreignKeys.some(fk =>
+          fk.columnNames.includes('roleId')
         );
-        const statusFk=userTable.foreignKeys.some(
-          fk => fk.columnNames.includes('statusId')
+        const statusFk = userTable.foreignKeys.some(fk =>
+          fk.columnNames.includes('statusId')
         );
 
         const foreignKeysToAdd: TableForeignKey[] = [];
 
-        if(!roleFk){
+        if (!roleFk) {
           foreignKeysToAdd.push(
             new TableForeignKey({
               columnNames: ['statusId'],
@@ -123,7 +118,7 @@ export class UpadateRelation11738574623067 implements MigrationInterface {
           );
         }
 
-        if(!statusFk){
+        if (!statusFk) {
           foreignKeysToAdd.push(
             new TableForeignKey({
               columnNames: ['roleId'],
@@ -143,8 +138,8 @@ export class UpadateRelation11738574623067 implements MigrationInterface {
       if (tokenTable) {
         //Check exist foreign key of tokens table
         logger.silly('Check exist foreign key of tokens table');
-        const userFk = tokenTable.foreignKeys.find(
-          fk => fk.columnNames.includes('userId')
+        const userFk = tokenTable.foreignKeys.find(fk =>
+          fk.columnNames.includes('userId')
         );
 
         if (!userFk) {
@@ -167,6 +162,5 @@ export class UpadateRelation11738574623067 implements MigrationInterface {
     }
   }
 
-  public async down(queryRunner: QueryRunner): Promise<void> {
-  }
+  public async down(queryRunner: QueryRunner): Promise<void> {}
 }
