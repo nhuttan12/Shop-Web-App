@@ -5,9 +5,10 @@ import { Strategy as LocalStrategy } from 'passport-local';
 
 import { env } from '../configs/env.js';
 import { User } from '../entities/User.js';
-import logger from '../utils/logger.js';
-import { messageLog } from '../utils/message-handling.js';
+import logger from './logger.js';
+import { messageLog } from './message-handling.js';
 
+//config for passport local authentication
 passport.use(
   new LocalStrategy(
     {
@@ -32,7 +33,7 @@ passport.use(
           where: {
             username,
             status: {
-              id: 4, // status banned
+              name: 'banned',
             },
           },
         });
@@ -55,7 +56,9 @@ passport.use(
         //If password does not match, return false
         if (!isMatch) {
           logger.info('Password is incorrect');
-          return done(null, false, { message: messageLog.invalidUsernameOrPassword });
+          return done(null, false, {
+            message: messageLog.invalidUsernameOrPassword,
+          });
         }
 
         //If password matches, return user
@@ -75,26 +78,40 @@ const jwtOptions = {
   secretOrKey: env.JWT_SECRET,
 };
 
+//config for jwt authentication
 passport.use(
   new JwtStrategy(jwtOptions, async (jwt_payload, done) => {
     try {
-      //Find user 
+      //Find user
+      logger.silly('Find user');
       const user: User | null = await User.findOne({
         where: { id: jwt_payload.id },
+        relations: ['status', 'role'],
       });
-      logger.debug(`Find user ${user}`);
+      logger.debug(`Find user ${JSON.stringify(user)}`);
 
-      //Checking user exist
+      //Checking user exist and status is active
+      logger.silly('Checking user exist and status is active');
       if (user) {
-        logger.silly('returning user');
-        return done(null, user);
+        logger.silly('User is exist');
+
+        if (user.status.name === 'banned') {
+          logger.silly('User is banned');
+          return done(null, false, 'Tài khoản đã bị cấm');
+        } else if (user.status.name !== 'active') {
+          logger.silly('User is not active');
+          return done(null, false, 'Tài khoản không hợp lệ');
+        } else {
+          logger.silly('Returning user');
+          return done(null, user);
+        }
       } else {
-        logger.silly('returning false');
+        logger.silly('Returning false');
         return done(null, false);
       }
     } catch (error) {
-
       //Throw error
+      logger.error('Error in passport', error);
       return done(error);
     }
   })
