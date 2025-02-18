@@ -63,6 +63,7 @@ export class CreateRoleTable1738517900510 implements MigrationInterface {
                 type: 'varchar',
                 length: '255',
                 default: "''",
+                isUnique: true,
               },
               {
                 name: 'createdAt',
