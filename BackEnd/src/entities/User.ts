@@ -7,7 +7,7 @@ import { BaseEntity } from './BaseEntity.js';
 import { Status } from './Status.js';
 import { Relation } from 'typeorm';
 import { OneToMany } from 'typeorm/decorator/relations/OneToMany.js';
-import { Token } from './Token.js';
+import { RefreshToken } from './RefreshToken.js';
 
 @Entity('users')
 export class User extends BaseEntity{
@@ -28,6 +28,6 @@ export class User extends BaseEntity{
   @JoinColumn({ name: 'roleId' })
   role!: Relation<Role>;
 
-  @OneToMany(()=>Token, (token)=>token.user)
-  tokens!: Relation<Token[]>;
+  @OneToMany(()=>RefreshToken, (RefreshToken)=>RefreshToken.user)
+  tokens!: Relation<RefreshToken[]>;
 }

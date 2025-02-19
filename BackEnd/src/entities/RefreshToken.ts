@@ -7,7 +7,7 @@ import { JoinColumn } from 'typeorm/decorator/relations/JoinColumn.js';
 import { User } from './User.js';
 
 @Entity('refresh_token')
-export class Token extends BaseEntity {
+export class RefreshToken extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
