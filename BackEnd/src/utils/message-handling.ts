@@ -16,6 +16,7 @@ const userIsNotAllowedToPerformAction: string =
 const internalServerError: string = 'Internal Server Error';
 const databaseInitialize: string='Database initialized';
 const databaseNotInitialize: string='Database not initialized';
+const tokenRefreshedSuccessful: string = 'Token refresh successful';
 
 export const messageLog = {
   userCreateSuccess,
@@ -30,5 +31,6 @@ export const messageLog = {
   userIsNotAllowedToPerformAction,
   internalServerError,
   databaseInitialize,
-  databaseNotInitialize
+  databaseNotInitialize,
+  tokenRefreshedSuccessful
 };

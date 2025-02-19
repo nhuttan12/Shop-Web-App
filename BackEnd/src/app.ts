@@ -3,13 +3,15 @@ import express, { Application, NextFunction, Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import passport from 'passport';
 
-import { env } from './configs/env.js';
-import { AppDataSource } from './utils/data-source.js';
-import { router as authRoute } from './routes/auth-route.js';
-import { router as manageUserRoute } from './routes/admin/user-route.js';
 import './utils/passport.js';
 import logger from './utils/logger.js';
+import { env } from './configs/env.js';
+import { AppDataSource } from './utils/data-source.js';
+import { authRoute } from './routes/auth-route.js';
+import { manageUserRoute } from './routes/admin/user-route.js';
 import { messageLog } from './utils/message-handling.js';
+import { StatusBaseData } from './base-data/status-base-data.js';
+import { RolesBaseData } from './base-data/roles-base-data.js';
 
 const app: Application = express();
 
@@ -34,8 +36,16 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 
 const startServer = async (): Promise<void> => {
   try {
+    logger.silly('Assuming we have base data insertion in separate classes and methods');
+    const statusBaseData=new StatusBaseData();
+    const roleBaseData=new RolesBaseData();
+
     await AppDataSource.initialize();
     logger.silly(messageLog.databaseInitialize+' in app.ts');
+
+    logger.silly('Insert base data in tables before starting server.');
+    await statusBaseData.insertBaseStatusData();
+    await roleBaseData.insertBaseRoleData();
 
     app.listen(env.SERVER_PORT, () => {
       logger.debug(`Server running in ${env.SERVER_PORT}`);

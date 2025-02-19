@@ -12,4 +12,4 @@ router.get(
   UserController.getUsers
 );
 
-export { router };
+export { router as manageUserRoute };

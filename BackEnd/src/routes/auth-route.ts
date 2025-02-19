@@ -5,6 +5,8 @@ import logger from '../utils/logger.js';
 import { signInSchema } from '../zod-schema/auth-schema/sign-in-schema.js';
 import { authenticateLocal } from '../middleware/auth-local-passport.js';
 import { messageLog } from '../utils/message-handling.js';
+import { refreshTokenMiddleware } from '../middleware/refresh-token.js';
+import { resolve } from 'path';
 
 const router = Router();
 
@@ -35,4 +37,16 @@ router.post(
   }
 );
 
-export { router };
+router.post(
+  '/refresh-token',
+  refreshTokenMiddleware,
+  (req: Request, res: Response, next: NextFunction) => {
+    res.json({
+      message: messageLog.tokenRefreshedSuccessful,
+      accessToken: res.locals.accessToken,
+      refreshToken: res.locals.refreshToken,
+    })
+  }
+);
+
+export { router as authRoute };
