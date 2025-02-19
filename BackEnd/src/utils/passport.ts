@@ -23,7 +23,7 @@ passport.use(
           where: {
             username,
             status: {
-              id: 1, // status active
+              name: 'Active', 
             },
           },
         });
@@ -33,7 +33,7 @@ passport.use(
           where: {
             username,
             status: {
-              name: 'banned',
+              name: 'Banned',
             },
           },
         });
@@ -98,12 +98,15 @@ passport.use(
         if (user.status.name === 'banned') {
           logger.silly('User is banned');
           return done(null, false, 'Tài khoản đã bị cấm');
+
         } else if (user.status.name !== 'active') {
           logger.silly('User is not active');
           return done(null, false, 'Tài khoản không hợp lệ');
+
         } else {
           logger.silly('Returning user');
           return done(null, user);
+          
         }
       } else {
         logger.silly('Returning false');
