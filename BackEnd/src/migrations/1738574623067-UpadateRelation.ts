@@ -133,20 +133,20 @@ export class UpadateRelation11738574623067 implements MigrationInterface {
         await queryRunner.createForeignKeys('users', foreignKeysToAdd);
       }
 
-      //TOKENS TABLE
-      const tokenTable = await queryRunner.getTable('tokens');
-      if (tokenTable) {
+      //REFRESH TOKEN TABLE
+      const refreshTokensTable = await queryRunner.getTable('refresh_tokens');
+      if (refreshTokensTable) {
         //Check exist foreign key of tokens table
-        logger.silly('Check exist foreign key of tokens table');
-        const userFk = tokenTable.foreignKeys.find(fk =>
+        logger.silly('Check exist foreign key of refresh tokens table');
+        const userFk = refreshTokensTable.foreignKeys.find(fk =>
           fk.columnNames.includes('userId')
         );
 
         if (!userFk) {
           //Create foreign key userId of tokens table
-          logger.info('Create foreign key userId of tokens table');
+          logger.info('Create foreign key userId of refresh tokens table');
           await queryRunner.createForeignKey(
-            'tokens',
+            'refresh_tokens',
             new TableForeignKey({
               columnNames: ['userId'],
               referencedTableName: 'users',
