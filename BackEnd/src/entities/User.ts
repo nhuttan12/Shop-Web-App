@@ -6,6 +6,8 @@ import { Role } from './Role.js';
 import { BaseEntity } from './BaseEntity.js';
 import { Status } from './Status.js';
 import { Relation } from 'typeorm';
+import { OneToMany } from 'typeorm/decorator/relations/OneToMany.js';
+import { Token } from './Token.js';
 
 @Entity('users')
 export class User extends BaseEntity{
@@ -25,4 +27,7 @@ export class User extends BaseEntity{
   @ManyToOne(() => Role, (role) => role.users)
   @JoinColumn({ name: 'roleId' })
   role!: Relation<Role>;
+
+  @OneToMany(()=>Token, (token)=>token.user)
+  tokens!: Relation<Token[]>;
 }
