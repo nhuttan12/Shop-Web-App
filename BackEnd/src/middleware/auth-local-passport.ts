@@ -1,10 +1,10 @@
-import jwt from 'jsonwebtoken';
 import { NextFunction, Request, Response } from 'express';
+import jwt from 'jsonwebtoken';
 import passport from 'passport';
-import logger from '../utils/logger.js';
-import { ErrorHandler } from '../utils/error-handling.js';
-import { messageLog } from '../utils/message-handling.js';
 import { env } from '../configs/env.js';
+import { ErrorHandler } from '../utils/error-handling.js';
+import logger from '../utils/logger.js';
+import { messageLog } from '../utils/message-handling.js';
 
 export const authenticateLocal = (
   req: Request,
@@ -29,11 +29,22 @@ export const authenticateLocal = (
         );
       }
 
+      const accessTokenExpiresIn: number = Number(
+        env.EXPIRE_ACCESS_TOKEN_PRIVATE_KEY
+      );
+      const refreshTokenExpiresIn: number = Number(
+        env.EXPIRE_REFRESH_TOKEN_PRIVATE_KEY
+      );
+
+      if (!accessTokenExpiresIn || !refreshTokenExpiresIn) {
+        throw new ErrorHandler('Invalid expiresIn value', 500);
+      }
+
       //Generate access token
       logger.silly(`Generate token`);
       const payload = { id: user.id };
       const accessToken: string = jwt.sign(payload, env.JWT_SECRET, {
-        expiresIn: '1h',
+        expiresIn: accessTokenExpiresIn,
       });
 
       //Generate refresh token
@@ -42,7 +53,7 @@ export const authenticateLocal = (
         payload,
         env.REFRESH_TOKEN_PRIVATE_KEY,
         {
-          expiresIn: '7d',
+          expiresIn: refreshTokenExpiresIn,
         }
       );
 
