@@ -26,12 +26,23 @@ export const refreshTokenMiddleware = (
 
       const payload = { id: decoded.id };
 
+      const accessTokenExpiresTime: number = Number(
+        env.EXPIRE_ACCESS_TOKEN_PRIVATE_KEY
+      );
+      const refreshTokenExpiresTime: number = Number(
+        env.EXPIRE_REFRESH_TOKEN_PRIVATE_KEY
+      );
+
+      if (!accessTokenExpiresTime || !refreshTokenExpiresTime) {
+        throw new ErrorHandler('Invalid expiresIn value', 500);
+      }
+
       const accessToken = jwt.sign(payload, env.JWT_SECRET, {
-        expiresIn: '1h',
+        expiresIn: accessTokenExpiresTime,
       });
 
       const refreshToken=jwt.sign(payload, env.REFRESH_TOKEN_PRIVATE_KEY, {
-        expiresIn: '7d',
+        expiresIn: refreshTokenExpiresTime,
       });
 
       res.locals.accessToken=accessToken;

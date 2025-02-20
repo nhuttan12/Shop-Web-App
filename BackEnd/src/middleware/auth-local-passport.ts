@@ -29,14 +29,14 @@ export const authenticateLocal = (
         );
       }
 
-      const accessTokenExpiresIn: number = Number(
+      const accessTokenExpiresTime: number = Number(
         env.EXPIRE_ACCESS_TOKEN_PRIVATE_KEY
       );
-      const refreshTokenExpiresIn: number = Number(
+      const refreshTokenExpiresTime: number = Number(
         env.EXPIRE_REFRESH_TOKEN_PRIVATE_KEY
       );
 
-      if (!accessTokenExpiresIn || !refreshTokenExpiresIn) {
+      if (!accessTokenExpiresTime || !refreshTokenExpiresTime) {
         throw new ErrorHandler('Invalid expiresIn value', 500);
       }
 
@@ -44,7 +44,7 @@ export const authenticateLocal = (
       logger.silly(`Generate token`);
       const payload = { id: user.id };
       const accessToken: string = jwt.sign(payload, env.JWT_SECRET, {
-        expiresIn: accessTokenExpiresIn,
+        expiresIn: accessTokenExpiresTime,
       });
 
       //Generate refresh token
@@ -53,7 +53,7 @@ export const authenticateLocal = (
         payload,
         env.REFRESH_TOKEN_PRIVATE_KEY,
         {
-          expiresIn: refreshTokenExpiresIn,
+          expiresIn: refreshTokenExpiresTime,
         }
       );
 
