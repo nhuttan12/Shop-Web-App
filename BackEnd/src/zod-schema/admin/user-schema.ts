@@ -1,10 +1,12 @@
 import z from 'zod';
+import { messageLog } from '../../utils/message-handling.js';
 
-export const userSchema = z.object({
-  username: z.string(),
-  passport: z.string(),
-  email: z.string().email(),
-  name: z.string().min(1)
+export const userUpdateSchema = z.object({
+  id: z.number(),
+  name: z.string().min(1, messageLog.nameHaveAtLeast1Character),
+  password: z.string().min(1, messageLog.passwordHasAtLeast1Character),
+  role: z.string(),
 });
 
-export type User = z.infer<typeof userSchema>;
+// convert from schema type to typescript object
+export type UserUpdateInput = z.infer<typeof userUpdateSchema>;
