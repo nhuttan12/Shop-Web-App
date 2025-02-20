@@ -4,6 +4,8 @@ import { SignUpService } from '../../services/auth/sign-up/sign-up-service.js';
 import { User } from '../../entities/User.js';
 import logger from '../../utils/logger.js';
 import { messageLog } from '../../utils/message-handling.js';
+import { z } from 'zod';
+import { ErrorHandler } from '../../utils/error-handling.js';
 
 export class SignUpController {
   static async signUp(req: Request, res: Response, next: NextFunction) {
@@ -15,20 +17,27 @@ export class SignUpController {
       );
 
       //sign up with username, email, password, retypePassword
-      const result: User = await SignUpService.signUp({
+      logger.silly('Sign up user with username, email, password, retypePassword');
+      await SignUpService.signUp({
         username,
         email,
         password,
         retypePassword,
       });
-      logger.info(`User created ${result}`);
 
-      res
-        .status(201)
-        .json({ message: messageLog.userCreateSuccess, data: result });
+      res.status(201).json({ message: messageLog.userCreateSuccess });
     } catch (error: any) {
-      logger.error(`Error in sign-up-controller ${error}`);
-      next(error);
+      logger.error(`Error in sign-up-controller: ${error}`);
+      //if zod's error, return the detail message
+      if (error instanceof z.ZodError) {
+        res.status(400).json({
+          status: 'lỗi',
+          error: error.issues.map(issue => issue.message).join(', '),
+        });
+        return;
+      }else{
+        next(new ErrorHandler(messageLog.internalServerError, 500));
+      }
     }
   }
 }
