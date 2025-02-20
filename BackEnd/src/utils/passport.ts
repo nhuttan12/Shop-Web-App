@@ -23,30 +23,22 @@ passport.use(
           where: {
             username,
             status: {
-              name: 'Active', 
+              name: 'Active',
             },
           },
+          relations: ['status', 'role'],
         });
-        logger.debug(`Find user by username ${user}`);
-
-        const userBanned: User | null = await User.findOne({
-          where: {
-            username,
-            status: {
-              name: 'Banned',
-            },
-          },
-        });
-
-        if (userBanned) {
-          logger.info('User is banned');
-          return done(null, false, { message: messageLog.userBanned });
-        }
+        logger.debug(`Find user by username ${JSON.stringify(user)}`);
 
         //Check if user exists
         if (!user) {
           logger.info('User not found');
           return done(null, false, { message: messageLog.userNotExist });
+        }
+        
+        if (user.status.name==='Banned') {
+          logger.info('User is banned');
+          return done(null, false, { message: messageLog.userBanned });
         }
 
         //Check if user password is matches
@@ -98,15 +90,12 @@ passport.use(
         if (user.status.name === 'banned') {
           logger.silly('User is banned');
           return done(null, false, 'Tài khoản đã bị cấm');
-
         } else if (user.status.name !== 'active') {
           logger.silly('User is not active');
           return done(null, false, 'Tài khoản không hợp lệ');
-
         } else {
           logger.silly('Returning user');
           return done(null, user);
-          
         }
       } else {
         logger.silly('Returning false');
