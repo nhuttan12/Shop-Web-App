@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
-import { env } from '../configs/env.js';
+import { env } from '../environment/env.js';
 import { ErrorHandler } from '../utils/error-handling.js';
 import logger from '../utils/logger.js';
 import { messageLog } from '../utils/message-handling.js';
@@ -10,7 +10,7 @@ export const authenticateLocal = (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+):void => {
   return passport.authenticate(
     'local',
     { session: false },
@@ -23,10 +23,17 @@ export const authenticateLocal = (
 
       //User not found
       if (!user) {
-        logger.info(`Invalid credentials`);
-        return next(
-          new ErrorHandler(messageLog.invalidUsernameOrPassword, 406)
-        );
+        //checking info have error message
+        if (info && info.message) {
+          logger.info(`Authenticated failed: ${info.message}`);
+          res.status(400).json({ message: info.message });
+          return;
+        } else {
+          logger.info(`Invalid credentials`);
+          return next(
+            new ErrorHandler(messageLog.invalidUsernameOrPassword, 406)
+          );
+        }
       }
 
       const accessTokenExpiresTime: number = Number(

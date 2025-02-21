@@ -7,14 +7,14 @@ import logger from '../utils/logger.js';
 export function checkAbility(action: string, subject: string | object) {
   return (req: Request, res: Response, next: NextFunction) => {
     //get user information
-    const user = req.user as User;
+    const user = res.locals.user as User;
     logger.debug(`Get user information ${JSON.stringify(user)}`);
 
     //check user information exists
     logger.silly('Check user information exists');
     if (!user) {
-      logger.debug('user not found');
-      res.status(401).json({ error: messageLog.userIsnotAuthorized });
+      logger.debug(messageLog.userNotFound);
+      res.status(401).json({ error: messageLog.userIsNotAllowedToPerformAction });
       return;
     }
 

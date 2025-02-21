@@ -3,7 +3,7 @@ import passport from 'passport';
 import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt';
 import { Strategy as LocalStrategy } from 'passport-local';
 
-import { env } from '../configs/env.js';
+import { env } from '../environment/env.js';
 import { User } from '../entities/User.js';
 import logger from './logger.js';
 import { messageLog } from './message-handling.js';
@@ -22,9 +22,6 @@ passport.use(
         const user: User | null = await User.findOne({
           where: {
             username,
-            status: {
-              name: 'Active',
-            },
           },
           relations: ['status', 'role'],
         });
@@ -35,8 +32,8 @@ passport.use(
           logger.info('User not found');
           return done(null, false, { message: messageLog.userNotExist });
         }
-        
-        if (user.status.name==='Banned') {
+
+        if (user.status.name === 'Banned') {
           logger.info('User is banned');
           return done(null, false, { message: messageLog.userBanned });
         }
@@ -81,18 +78,17 @@ passport.use(
         relations: ['status', 'role'],
       });
       logger.debug(`Find user ${JSON.stringify(user)}`);
-
       //Checking user exist and status is active
       logger.silly('Checking user exist and status is active');
       if (user) {
-        logger.silly('User is exist');
-
-        if (user.status.name === 'banned') {
+        //Checking user status is banned
+        logger.silly('Checking user status is banned');
+        if (user.status.name.toLowerCase() === 'banned') {
           logger.silly('User is banned');
-          return done(null, false, 'Tài khoản đã bị cấm');
-        } else if (user.status.name !== 'active') {
+          return done(null, false, { message: messageLog.userBanned });
+        } else if (user.status.name.toLocaleLowerCase() !== 'active') {
           logger.silly('User is not active');
-          return done(null, false, 'Tài khoản không hợp lệ');
+          return done(null, false, { message: messageLog.userNotActive });
         } else {
           logger.silly('Returning user');
           return done(null, user);
@@ -102,7 +98,8 @@ passport.use(
         return done(null, false);
       }
     } catch (error) {
-      //Throw error
+      // Ensure error is an instance of ErrorHandler
+      const errorMessage=error instanceof Error ? error.message : 'Unknow error'
       logger.error('Error in passport', error);
       return done(error);
     }
