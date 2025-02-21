@@ -2,11 +2,13 @@ import 'reflect-metadata';
 import express, { Application, NextFunction, Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import passport from 'passport';
+import swaggerUi from 'swagger-ui-express';
+
 
 import './utils/passport.js';
 import logger from './utils/logger.js';
-import { env } from './configs/env.js';
-import { AppDataSource } from './utils/data-source.js';
+import { env } from './environment/env.js';
+import { AppDataSource } from './configs/data-source.js';
 import { authRoute } from './routes/auth-route.js';
 import { manageUserRoute } from './routes/admin/user-route.js';
 import { messageLog } from './utils/message-handling.js';
@@ -22,14 +24,15 @@ app.use(passport.initialize());
 
 app.use('/auth', authRoute);
 
-app.use('/admin-auth', manageUserRoute);
+app.use('/auth/v2', manageUserRoute);
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-  logger.error(err.message);
+  logger.error('Error message:',err.message);
   if(err.isOperational){
+    logger.error('Error message is operational:',err.message);
     res.status(err.statusCode).json({ status: err.status ,error: err.message });
   }else{
-    logger.error(`Error ${err}`);
+    logger.error(`Global error in app.ts: ${err}`);
     res.status(500).json({ status: 500, message: messageLog.internalServerError });
   }
 });
