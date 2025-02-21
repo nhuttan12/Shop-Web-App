@@ -1,12 +1,14 @@
-import passport from 'passport';
-import { Strategy as LocalStrategy } from 'passport-local';
 import bcrypt from 'bcrypt';
+import passport from 'passport';
+import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt';
+import { Strategy as LocalStrategy } from 'passport-local';
 
-import { AppDataSource } from './data-source.js';
+import { env } from '../environment/env.js';
 import { User } from '../entities/User.js';
-import { Repository } from 'typeorm';
 import logger from './logger.js';
+import { messageLog } from './message-handling.js';
 
+//config for passport local authentication
 passport.use(
   new LocalStrategy(
     {
@@ -16,40 +18,24 @@ passport.use(
     },
     async (username: string, password: string, done) => {
       try {
-        //Get user repository
-        const userRepo: Repository<User> =
-          await AppDataSource.getRepository('User');
-        logger.silly('Get user repository');
-
         //Find user by username with status is active
-        const user: User | null = await userRepo.findOne({
+        const user: User | null = await User.findOne({
           where: {
             username,
-            status: {
-              id: 1, // status active
-            },
           },
+          relations: ['status', 'role'],
         });
-        logger.debug(`Find user by username ${user}`);
-
-        const userBanned: User|null=await userRepo.findOne({
-          where:{
-            username,
-            status:{
-              id: 4, // status banned
-            }
-          }
-        });
-
-        if(userBanned){
-          logger.info('User is banned');
-          return done(null, false, { message: 'Tài khoản đã bị khóa' });
-        }
+        logger.debug(`Find user by username ${JSON.stringify(user)}`);
 
         //Check if user exists
         if (!user) {
           logger.info('User not found');
-          return done(null, false, { message: 'Tài khoản không tồn tại' });
+          return done(null, false, { message: messageLog.userNotExist });
+        }
+
+        if (user.status.name === 'Banned') {
+          logger.info('User is banned');
+          return done(null, false, { message: messageLog.userBanned });
         }
 
         //Check if user password is matches
@@ -59,18 +45,63 @@ passport.use(
         //If password does not match, return false
         if (!isMatch) {
           logger.info('Password is incorrect');
-          return done(null, false, { message: 'Sai tài khoản hoặc mật khẩu' });
+          return done(null, false, {
+            message: messageLog.invalidUsernameOrPassword,
+          });
         }
 
         //If password matches, return user
         logger.info(`User ${user.username} logged in`);
         return done(null, user);
       } catch (error) {
-
         //Throw error
         logger.error('Error in login', error);
         return done(error);
       }
     }
   )
+);
+
+const jwtOptions = {
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: env.JWT_SECRET,
+};
+
+//config for jwt authentication
+passport.use(
+  new JwtStrategy(jwtOptions, async (jwt_payload, done) => {
+    try {
+      //Find user
+      logger.silly('Find user');
+      const user: User | null = await User.findOne({
+        where: { id: jwt_payload.id },
+        relations: ['status', 'role'],
+      });
+      logger.debug(`Find user ${JSON.stringify(user)}`);
+      //Checking user exist and status is active
+      logger.silly('Checking user exist and status is active');
+      if (user) {
+        //Checking user status is banned
+        logger.silly('Checking user status is banned');
+        if (user.status.name.toLowerCase() === 'banned') {
+          logger.silly('User is banned');
+          return done(null, false, { message: messageLog.userBanned });
+        } else if (user.status.name.toLocaleLowerCase() !== 'active') {
+          logger.silly('User is not active');
+          return done(null, false, { message: messageLog.userNotActive });
+        } else {
+          logger.silly('Returning user');
+          return done(null, user);
+        }
+      } else {
+        logger.silly('Returning false');
+        return done(null, false);
+      }
+    } catch (error) {
+      // Ensure error is an instance of ErrorHandler
+      const errorMessage=error instanceof Error ? error.message : 'Unknow error'
+      logger.error('Error in passport', error);
+      return done(error);
+    }
+  })
 );

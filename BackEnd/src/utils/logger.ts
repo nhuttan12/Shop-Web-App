@@ -1,12 +1,12 @@
 import 'winston-daily-rotate-file';
 
-import winston, { Logger } from 'winston';
-import { env } from '../configs/env.js';
+import winston, { format, Logger } from 'winston';
+import { env } from '../environment/env.js';
 
 //config format of log
-const logFormat=winston.format.combine(
-  winston.format.timestamp({format:'DD-MM-YYYY HH:mm:ss'}),
-  winston.format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`)
+const logFormat=format.combine(
+  format.timestamp({format:'DD-MM-YYYY HH:mm:ss'}),
+  format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`)
 )
 
 //print to console for log's level is info level up

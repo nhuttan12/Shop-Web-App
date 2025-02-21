@@ -1,8 +1,10 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
+import logger from '../utils/logger.js';
 
 export class CreateRoleTable1738517900510 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     try {
+      logger.debug('Create role table if not exist');
       const roleTable = await queryRunner.hasTable('roles');
       if (!roleTable) {
         await queryRunner.createTable(
@@ -22,6 +24,7 @@ export class CreateRoleTable1738517900510 implements MigrationInterface {
                 type: 'varchar',
                 length: '255',
                 default: "''",
+                isUnique: true,
               },
               {
                 name: 'statusId',
@@ -44,6 +47,7 @@ export class CreateRoleTable1738517900510 implements MigrationInterface {
         );
       }
 
+      logger.debug('Create status table if not exist');
       const statusTable = await queryRunner.hasTable('status');
       if (!statusTable) {
         await queryRunner.createTable(
@@ -63,6 +67,7 @@ export class CreateRoleTable1738517900510 implements MigrationInterface {
                 type: 'varchar',
                 length: '255',
                 default: "''",
+                isUnique: true,
               },
               {
                 name: 'createdAt',
@@ -80,6 +85,7 @@ export class CreateRoleTable1738517900510 implements MigrationInterface {
         );
       }
 
+      logger.debug('Create category table if not exist');
       const categoriesTable = await queryRunner.hasTable('categories');
       if (!categoriesTable) {
         await queryRunner.createTable(
@@ -99,6 +105,7 @@ export class CreateRoleTable1738517900510 implements MigrationInterface {
                 type: 'varchar',
                 length: '255',
                 default: "''",
+                isUnique: true,
               },
               {
                 name: 'description',
@@ -127,6 +134,7 @@ export class CreateRoleTable1738517900510 implements MigrationInterface {
         );
       }
 
+      logger.debug('Create product table if not exist');
       const productsTable = await queryRunner.hasTable('products');
       if (!productsTable) {
         await queryRunner.createTable(
@@ -195,6 +203,7 @@ export class CreateRoleTable1738517900510 implements MigrationInterface {
         );
       }
 
+      logger.debug('Create user table if not exist');
       const usersTable = await queryRunner.hasTable('users');
       if (!usersTable) {
         await queryRunner.createTable(
@@ -214,6 +223,7 @@ export class CreateRoleTable1738517900510 implements MigrationInterface {
                 type: 'varchar',
                 length: '255',
                 default: "''",
+                isUnique: true,
               },
               {
                 name: 'password',
@@ -226,6 +236,7 @@ export class CreateRoleTable1738517900510 implements MigrationInterface {
                 type: 'varchar',
                 length: '255',
                 default: "''",
+                isUnique: true,
               },
               {
                 name: 'name',
@@ -242,6 +253,49 @@ export class CreateRoleTable1738517900510 implements MigrationInterface {
                 name: 'statusId',
                 type: 'int',
                 default: 0,
+              },
+              {
+                name: 'createdAt',
+                type: 'timestamp',
+                default: 'CURRENT_TIMESTAMP',
+              },
+              {
+                name: 'updatedAt',
+                type: 'timestamp',
+                default: 'CURRENT_TIMESTAMP',
+                onUpdate: 'CURRENT_TIMESTAMP',
+              },
+            ],
+          })
+        );
+      }
+
+      logger.debug('Create refresh_tokens table if not exist');
+      const refreshTokensTable = await queryRunner.hasTable('refresh_tokens');
+      if (!refreshTokensTable) {
+        await queryRunner.createTable(
+          new Table({
+            name: 'refresh_tokens',
+            columns: [
+              {
+                name: 'id',
+                type: 'int',
+                isPrimary: true,
+                isGenerated: true,
+                generationStrategy: 'increment',
+                isUnique: true,
+              },
+              {
+                name: 'userId',
+                type: 'int',
+              },
+              {
+                name: 'token',
+                type: 'text',
+              },
+              {
+                name: 'expiration',
+                type: 'timestamp',
               },
               {
                 name: 'createdAt',
