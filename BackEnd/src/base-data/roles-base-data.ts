@@ -2,6 +2,7 @@ import logger from '../utils/logger.js';
 import { Role } from '../entities/Role.js';
 import { Status } from '../entities/Status.js';
 import { ErrorHandler } from '../utils/error-handling.js';
+import { messageLog } from '../utils/message-handling.js';
 
 export class RolesBaseData {
   async insertBaseRoleData() {
@@ -10,22 +11,20 @@ export class RolesBaseData {
       name: 'Active',
     });
 
-    logger.debug(`Check active status exists`);
+    logger.debug(messageLog.activeStatusNotFound);
     if (!activeStatus) {
-      logger.error(
-        'Active status not found in database. Ensure status data is seeded first.'
-      );
+      logger.error(messageLog.activeStatusNotFound);
       throw new ErrorHandler(
-        'Active status not found. Seed status data first.',
+        messageLog.activeStatusNotFound,
         404
       );
     }
 
     // logger.silly('Base data for inserting into roles table');
-    const roleData: {name: string, status: Status}[] = [
-      {name: 'Admin', status: activeStatus},
-      {name: 'Mod', status: activeStatus},
-      {name: 'User', status: activeStatus},
+    const roleData: { name: string; status: Status }[] = [
+      { name: 'Admin', status: activeStatus },
+      { name: 'Mod', status: activeStatus },
+      { name: 'User', status: activeStatus },
     ];
 
     try {

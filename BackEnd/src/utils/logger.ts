@@ -1,7 +1,7 @@
 import 'winston-daily-rotate-file';
 
 import winston, { format, Logger } from 'winston';
-import { env } from '../configs/env.js';
+import { env } from '../environment/env.js';
 
 //config format of log
 const logFormat=format.combine(
@@ -11,7 +11,7 @@ const logFormat=format.combine(
 
 //print to console for log's level is info level up
 const consoleTransport=new winston.transports.Console({
-  level:'debug',
+  level:'silly',
 });
 
 //write to file for log's level is info level up
