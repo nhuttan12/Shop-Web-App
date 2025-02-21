@@ -2,9 +2,9 @@ import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import { join } from 'path';
 
-import { env } from '../configs/env.js';
-import logger from './logger.js';
-import { messageLog } from './message-handling.js';
+import { env } from '../environment/env.js';
+import logger from '../utils/logger.js';
+import { messageLog } from '../utils/message-handling.js';
 
 export const AppDataSource = new DataSource({
   type: env.DB_DIALECT as 'mysql' | 'postgres' | 'sqlite' | 'mssql',

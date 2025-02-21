@@ -2,8 +2,8 @@ import { config } from 'dotenv-safe';
 import { join } from 'path';
 
 config({
-  path: join(process.cwd(), 'src', 'configs', '.env'),
-  example: join(process.cwd(), 'src', 'configs', '.env.example'),
+  path: join(process.cwd(), 'src', 'environment', '.env'),
+  example: join(process.cwd(), 'src', 'environment', '.env.example'),
   allowEmptyValues: true,
 });
 
