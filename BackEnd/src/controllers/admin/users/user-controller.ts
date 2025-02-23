@@ -15,7 +15,7 @@ export class UserController {
 
       //get users from UserService and send response to client
       const result = await UserService.getUsers(page, limit);
-      logger.debug('result: ' + result);
+      logger.debug('result: ' + JSON.stringify(result));
 
       res.status(200).json(result);
     } catch (error) {
@@ -54,16 +54,16 @@ export class UserController {
       }
 
       //Get user data from request body
-      const {name, password, role}= req.body;
-      logger.debug(`User data from request: ${name} ${password} ${role}`);
+      const {name, password, role, status}= req.body;
+      logger.debug(`User data from request: ${name} ${password} ${role} ${status}`);
 
       //check if all required fields are provided
-      if(!name||!password||!role){
+      if(!name||!password||!role||!status){
         logger.error('Data missing required fields');
         throw new ErrorHandler(messageLog.dataInvalid, 400);
       }
       //Update user
-      await UserService.updateUser({id, name, password, role});
+      await UserService.updateUser({id, name, password, role, status});
 
       res.status(200).json({message: messageLog.dataUpdated});
     } catch (error) {

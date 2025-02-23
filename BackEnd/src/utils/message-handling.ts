@@ -36,7 +36,10 @@ const activeStatusNotFound: string =
   'Active status not found in database. Ensure status data is seeded first.';
 const chekcingActiveStatusExist: string = 'Check active status exists';
 const userNotFound: string = 'User not found'
+const invalidStatus: string = 'Trạng thái bị lỗi';
+
 export const messageLog = {
+  invalidStatus,
   userNotFound,
   chekcingActiveStatusExist,
   activeStatusNotFound,

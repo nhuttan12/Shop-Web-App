@@ -6,6 +6,7 @@ export const userUpdateSchema = z.object({
   name: z.string().min(1, messageLog.nameHaveAtLeast1Character),
   password: z.string().min(1, messageLog.passwordHasAtLeast1Character),
   role: z.string(),
+  status: z.string()
 });
 
 // convert from schema type to typescript object
