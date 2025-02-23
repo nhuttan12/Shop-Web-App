@@ -7,6 +7,7 @@ import { env } from '../environment/env.js';
 import { User } from '../entities/User.js';
 import logger from './logger.js';
 import { messageLog } from './message-handling.js';
+import { UserDTO } from '../dtos/user-dto.js';
 
 //config for passport local authentication
 passport.use(
@@ -25,7 +26,6 @@ passport.use(
           },
           relations: ['status', 'role'],
         });
-        logger.debug(`Find user by username ${JSON.stringify(user)}`);
 
         //Check if user exists
         if (!user) {
@@ -50,9 +50,13 @@ passport.use(
           });
         }
 
+        //Convert to uset DTO
+        const userDTO: UserDTO = await UserDTO.fromEntity(user);
+        logger.debug(`Find user by username ${JSON.stringify(userDTO)}`);
+
         //If password matches, return user
-        logger.info(`User ${user.username} logged in`);
-        return done(null, user);
+        logger.info(`User ${userDTO.username} logged in`);
+        return done(null, userDTO);
       } catch (error) {
         //Throw error
         logger.error('Error in login', error);
@@ -77,21 +81,32 @@ passport.use(
         where: { id: jwt_payload.id },
         relations: ['status', 'role'],
       });
-      logger.debug(`Find user ${JSON.stringify(user)}`);
+
+      //Checking user is null
+      if (!user) {
+        logger.info('User not found');
+        return done(null, false, { message: messageLog.userNotExist });
+      }
+
+      //Convert to uset DTO
+      const userDTO: UserDTO = await UserDTO.fromEntity(user);
+      logger.debug(`Find user ${JSON.stringify(userDTO)}`);
+
+
       //Checking user exist and status is active
       logger.silly('Checking user exist and status is active');
-      if (user) {
+      if (userDTO) {
         //Checking user status is banned
         logger.silly('Checking user status is banned');
-        if (user.status.name.toLowerCase() === 'banned') {
+        if (userDTO.status.name.toLowerCase() === 'banned') {
           logger.silly('User is banned');
           return done(null, false, { message: messageLog.userBanned });
-        } else if (user.status.name.toLocaleLowerCase() !== 'active') {
+        } else if (userDTO.status.name.toLocaleLowerCase() !== 'active') {
           logger.silly('User is not active');
           return done(null, false, { message: messageLog.userNotActive });
         } else {
           logger.silly('Returning user');
-          return done(null, user);
+          return done(null, userDTO);
         }
       } else {
         logger.silly('Returning false');
@@ -99,7 +114,8 @@ passport.use(
       }
     } catch (error) {
       // Ensure error is an instance of ErrorHandler
-      const errorMessage=error instanceof Error ? error.message : 'Unknow error'
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknow error';
       logger.error('Error in passport', error);
       return done(error);
     }
