@@ -2,8 +2,6 @@ import 'reflect-metadata';
 import express, { Application, NextFunction, Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import passport from 'passport';
-import swaggerUi from 'swagger-ui-express';
-
 
 import './utils/passport.js';
 import logger from './utils/logger.js';
