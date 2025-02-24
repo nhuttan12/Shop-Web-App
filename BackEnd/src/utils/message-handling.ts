@@ -37,8 +37,12 @@ const activeStatusNotFound: string =
 const chekcingActiveStatusExist: string = 'Check active status exists';
 const userNotFound: string = 'User not found'
 const invalidStatus: string = 'Trạng thái bị lỗi';
+const errorInProductAdminController: string = 'Error in ProductAdminController';
+const errorInproductService: string = 'Error in Product Service';
 
 export const messageLog = {
+  errorInproductService,
+  errorInProductAdminController,
   invalidStatus,
   userNotFound,
   chekcingActiveStatusExist,
