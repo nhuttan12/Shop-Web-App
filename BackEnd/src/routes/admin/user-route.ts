@@ -1,8 +1,7 @@
-import { NextFunction, Request, Response, Router } from 'express';
-import passport from 'passport';
-import { UserController } from '../../controllers/admin/users/user-controller.js';
-import { checkAbility } from '../../middleware/authorization.js';
+import { Router } from 'express';
+import { UserController } from '../../controllers/admin/user-management/user-admin-controller.js';
 import { authenticateJwt } from '../../middleware/auth-jwt-passport.js';
+import { checkAbility } from '../../middleware/authorization.js';
 
 const router = Router();
 
