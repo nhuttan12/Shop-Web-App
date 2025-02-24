@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
-import { env } from '../environment/env.js';
+import { env } from '../configs/env.js';
 import { ErrorHandler } from '../utils/error-handling.js';
 import logger from '../utils/logger.js';
 import { messageLog } from '../utils/message-handling.js';

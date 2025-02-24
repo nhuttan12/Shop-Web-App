@@ -5,9 +5,9 @@ import passport from 'passport';
 
 import './utils/passport.js';
 import logger from './utils/logger.js';
-import { env } from './environment/env.js';
+import { env } from './configs/env.js';
 import { AppDataSource } from './configs/data-source.js';
-import { authRoute } from './routes/auth-route.js';
+import { authRoute } from './routes/user/auth-route.js';
 import { manageUserRoute } from './routes/admin/user-route.js';
 import { messageLog } from './utils/message-handling.js';
 import { StatusBaseData } from './base-data/status-base-data.js';

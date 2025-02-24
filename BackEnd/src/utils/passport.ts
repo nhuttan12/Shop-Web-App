@@ -3,7 +3,7 @@ import passport from 'passport';
 import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt';
 import { Strategy as LocalStrategy } from 'passport-local';
 
-import { env } from '../environment/env.js';
+import { env } from '../configs/env.js';
 import { User } from '../entities/User.js';
 import logger from './logger.js';
 import { messageLog } from './message-handling.js';

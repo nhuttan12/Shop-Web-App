@@ -1,7 +1,7 @@
 import 'winston-daily-rotate-file';
 
 import winston, { format, Logger } from 'winston';
-import { env } from '../environment/env.js';
+import { env } from '../configs/env.js';
 
 //config format of log
 const logFormat=format.combine(
