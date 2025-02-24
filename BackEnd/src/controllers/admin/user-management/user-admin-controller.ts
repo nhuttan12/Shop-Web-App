@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 
-import { UserService } from '../../../services/admin/users/user-service.js';
+import { UserService } from '../../../services/admin/users-service/user-service.js';
 import { ErrorHandler } from '../../../utils/error-handling.js';
 import logger from '../../../utils/logger.js';
 import { messageLog } from '../../../utils/message-handling.js';
