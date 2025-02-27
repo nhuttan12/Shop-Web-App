@@ -14,61 +14,168 @@ export class UserController {
       logger.debug('page: ' + page + ' limit: ' + limit);
 
       //get users from UserService and send response to client
-      const result = await UserService.getUsers(page, limit);
-      logger.debug('result: ' + JSON.stringify(result));
+      const users = await UserService.getUsers(page, limit);
+      logger.debug('users: ' + JSON.stringify(users));
 
-      res.status(200).json(result);
+      if (!users) {
+        logger.error('No users found');
+        throw new ErrorHandler(messageLog.userNotFound, 404); //No users found
+      }
+      res.status(200).json(users);
     } catch (error) {
-      logger.error('Error in getUsers controller', error);
-      next(new ErrorHandler('Error in getUsers controller', 500));
+      logger.error(
+        messageLog.errorInUserAdminController + ' getUsers function',
+        error
+      );
+      next(error);
     }
   }
 
   static async getUserById(req: Request, res: Response, next: NextFunction) {
     try {
-      //Get user id from request parameters
-      const id: number = Number(req.params.id) || 0;
-      logger.debug('User id from request: ' + id);
+      //Get user id, page and limit from request parameters
+      const page: number = Number(req.params.page) || 1;
+      const limit: number = 10;
+      const id: number = Number(req.params.id);
+      logger.debug(
+        'User id from request: ' + id,
+        'page: ' + page + ' limit: ' + limit
+      );
+
+      //Checking id is number
+      if (isNaN(id)) {
+        logger.error(`Invalid user id ${id}`);
+        throw new ErrorHandler(messageLog.invalidUserId, 400);
+      }
 
       //Get user information from UserService and send response to client
-      const user = await UserService.getUserById(id);
-      logger.debug('User info from request: ' + user);
+      const users = await UserService.getUserById(id, page, limit);
+      logger.debug('User info from request: ' + users);
 
-      res.status(200).json(user);
+      if (!users) {
+        logger.error(`User not found with id ${id}`);
+        throw new ErrorHandler(messageLog.userNotFound, 404); //user not found
+      }
+      res.status(200).json(users);
     } catch (error) {
-      logger.error('Error getting user information', error);
-      next(new ErrorHandler('Error getting user information', 500));
+      logger.error(
+        messageLog.errorInUserAdminController + ' getUserById function:',
+        error
+      );
+      next(error);
+    }
+  }
+
+  static async getUserByName(req: Request, res: Response, next: NextFunction) {
+    try {
+      //Get user id, page and limit from request parameters
+      const page: number = Number(req.params.page) || 1;
+      const limit: number = 10;
+      const name: string = req.params.name;
+      logger.debug(
+        'User name from request: ' + name,
+        'page: ' + page + ' limit: ' + limit
+      );
+
+      //check user name is existing
+      if(!name){
+        logger.error('Name is null');
+        throw new ErrorHandler(messageLog.dataInvalid, 400); //data missing required fields
+      }
+
+      //Get user information from UserService and send response to client
+      const users = await UserService.getUserByName(name, page, limit);
+      logger.debug('users: ' + JSON.stringify(users));
+
+      if (!users) {
+        logger.error(`User not found with name ${name}`);
+        throw new ErrorHandler(messageLog.userNotFound, 404); //user not found
+      }
+      res.status(200).json(users);
+    } catch (error) {
+      logger.error(
+        messageLog.errorInUserAdminController + ' getUserByName function:',
+        error
+      );
+      next(error);
     }
   }
 
   static async updateUser(req: Request, res: Response, next: NextFunction) {
     try {
       //Get user id from request parameters
-      const id: number=Number(req.params.id);
+      const id: number = Number(req.params.id);
       logger.debug('User id from request: ' + id);
 
-      //Checking id is number 
-      if(isNaN(id)){
+      //Checking id is number
+      if (isNaN(id)) {
         logger.error(`Invalid user id ${id}`);
-        throw new ErrorHandler('Invalid user id', 400);
+        throw new ErrorHandler(messageLog.invalidUserId, 400);
       }
 
       //Get user data from request body
-      const {name, password, role, status}= req.body;
-      logger.debug(`User data from request: ${name} ${password} ${role} ${status}`);
+      const { name, password, role, status } = req.body;
+      logger.debug(
+        `User data from request: ${name} ${password} ${role} ${status}`
+      );
 
       //check if all required fields are provided
-      if(!name||!password||!role||!status){
+      if (!name || !password || !role || !status) {
         logger.error('Data missing required fields');
         throw new ErrorHandler(messageLog.dataInvalid, 400);
       }
-      //Update user
-      await UserService.updateUser({id, name, password, role, status});
 
-      res.status(200).json({message: messageLog.dataUpdated});
+      //Update user
+      logger.silly('Update user');
+      const result = await UserService.updateUser({
+        id,
+        name,
+        password,
+        role,
+        status,
+      });
+
+      //check if user is updated successfully
+      if (result.affected && result.affected > 1) {
+        res.status(200).json({ message: messageLog.dataUpdated });
+      } else {
+        throw new ErrorHandler(messageLog.errorInUpdateUserInfo, 500);
+      }
     } catch (error) {
-      logger.error('Error updating user', error);
-      next(new ErrorHandler('Error updating user', 500));   
+      logger.error(
+        messageLog.errorInUserAdminController + ' updateUser function: ',
+        error
+      );
+      next(error);
+    }
+  }
+
+  static async banUser(req: Request, res: Response, next: NextFunction) {
+    try {
+      //Get user id from request parameters
+      const id: number = Number(req.params.id);
+      logger.debug('User id from request: ' + id);
+
+      //Checking id is number
+      if (isNaN(id)) {
+        logger.error(`Invalid user id ${id}`);
+        throw new ErrorHandler(messageLog.invalidUserId, 400);
+      }
+
+      //Update user
+      logger.silly('Ban user');
+      const result = await UserService.banUser(id);
+      if (result.affected && result.affected > 0) {
+        res.status(200).json({ message: messageLog.userBanned });
+      } else {
+        throw new ErrorHandler(messageLog.errorInBanUserBaseOnId, 500);
+      }
+    } catch (error) {
+      logger.error(
+        messageLog.errorInUserAdminController + ' banUser function',
+        error
+      );
+      next(error);
     }
   }
 }
