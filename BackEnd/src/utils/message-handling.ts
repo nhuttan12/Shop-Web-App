@@ -35,12 +35,40 @@ const userNotActive: string = 'Tài khoản chưa được kích hoạt';
 const activeStatusNotFound: string =
   'Active status not found in database. Ensure status data is seeded first.';
 const chekcingActiveStatusExist: string = 'Check active status exists';
-const userNotFound: string = 'User not found'
+const userNotFound: string = 'Không tìm thấy người dùng'
 const invalidStatus: string = 'Trạng thái bị lỗi';
 const errorInProductAdminController: string = 'Error in ProductAdminController';
 const errorInproductService: string = 'Error in Product Service';
+const productNotFound: string = 'Không tìm thấy sản phẩm';
+const errorInUserAdminController: string = 'Error in User Admin Controller';
+const errorInGetUsersInfo: string = 'Không thể hiển thị người dùng';
+const errorInGetUserInfoById: string = 'Tìm thông tin người dùng bằng mã người dùng thất bại'
+const errorInUpdateUserInfo: string = 'Cập nhật thông tin người dùng không thành công';
+const errorInBanUserBaseOnId: string = 'Khóa tài khoản người dùng không thành công'
+const errorInGetAllProducts: string = 'Không thể hiển thị sản phẩm';
+const errorInAddProduct: string = 'Không thể thêm sản phẩm'
+const errorInGetProductById: string = 'Tìm sản phẩm bằng mã sản phẩm thất bại';
+const errorInGetProductByName: string = 'Tìm sản phẩm bằng tên thất bại';
+const errorInDeleteProduct: string = 'Xóa sản phẩm không thành công';
+const invalidUserId: string = 'Mã người dùng không hợp lệ';
+const invalidProductId: string = 'Mã sản phẩm không hợp lệ';
+const productDeleteSuccess: string = 'Sản phẩm được xóa thành công';
 
 export const messageLog = {
+  productDeleteSuccess,
+  invalidProductId,
+  invalidUserId,
+  errorInDeleteProduct,
+  errorInGetProductByName,
+  errorInGetProductById,
+  errorInAddProduct,
+  errorInGetAllProducts,
+  errorInBanUserBaseOnId,
+  errorInUpdateUserInfo,
+  errorInGetUserInfoById,
+  errorInGetUsersInfo,
+  errorInUserAdminController,
+  productNotFound,
   errorInproductService,
   errorInProductAdminController,
   invalidStatus,
