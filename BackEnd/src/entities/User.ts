@@ -10,7 +10,7 @@ import { OneToMany } from 'typeorm/decorator/relations/OneToMany.js';
 import { RefreshToken } from './RefreshToken.js';
 
 @Entity('users')
-export class User extends BaseEntity{
+export class User extends BaseEntity {
   @Column({ type: 'varchar', length: 255 })
   username!: string;
 
@@ -28,6 +28,6 @@ export class User extends BaseEntity{
   @JoinColumn({ name: 'roleId' })
   role!: Relation<Role>;
 
-  @OneToMany(()=>RefreshToken, (RefreshToken)=>RefreshToken.user)
+  @OneToMany(() => RefreshToken, (RefreshToken) => RefreshToken.user)
   tokens!: Relation<RefreshToken[]>;
 }

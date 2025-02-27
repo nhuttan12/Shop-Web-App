@@ -6,7 +6,7 @@
   "printWidth": 80,
   "proseWrap": "always",
   "useTabs": false,
-  "arrowParens": "avoid",
+  "arrowParens": "always",
   "jsxSingleQuote": false,
   "bracketSpacing": true,
   "bracketSameLine": false,
