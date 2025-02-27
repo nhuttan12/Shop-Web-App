@@ -1,8 +1,14 @@
+//import library
 import 'reflect-metadata';
 import express, { Application, NextFunction, Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import passport from 'passport';
+import cors from 'cors'; 
+import {v2 as cloudinary} from 'cloudinary';
+import multer from 'multer';
+// import 
 
+//import variables from file
 import './utils/passport.js';
 import logger from './utils/logger.js';
 import { env } from './configs/env.js';
@@ -15,15 +21,27 @@ import { RolesBaseData } from './base-data/roles-base-data.js';
 
 const app: Application = express();
 
+//config for cors
+app.use(cors({ 
+  origin: 'localhost:3000', 
+  preflightContinue: true,
+  optionsSuccessStatus: 200,
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE'
+}))
+
+//config for body parser
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 
+//config for passport
 app.use(passport.initialize());
 
+//config for routes
 app.use('/auth', authRoute);
 
 app.use('/auth/v2', manageUserRoute);
 
+//config for global exception handler
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   logger.error('Error message:',err.message);
   if(err.isOperational){
@@ -35,6 +53,21 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   }
 });
 
+//config for cloudinary
+(async function(){
+  cloudinary.config({
+    cloud_name: env.CLOUD_NAME,
+    secure: env.SECURE==='true',
+    api_key: env.API_KEY,
+    api_secret: env.API_SECRET,
+  })
+})();
+
+
+//config for multer
+const uploadCloud=multer({})
+
+//start server
 const startServer = async (): Promise<void> => {
   try {
     logger.silly('Assuming we have base data insertion in separate classes and methods');
