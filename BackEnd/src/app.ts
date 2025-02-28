@@ -15,9 +15,10 @@ import { env } from './configs/env.js';
 import { AppDataSource } from './configs/data-source.js';
 import { authRoute } from './routes/user/auth-route.js';
 import { manageUserRoute } from './routes/admin/user-route.js';
-import { messageLog } from './utils/message-handling.js';
 import { StatusBaseData } from './base-data/status-base-data.js';
 import { RolesBaseData } from './base-data/roles-base-data.js';
+import { errorMessage } from './utils/message/error-message.js';
+import { notifyMessage } from './utils/message/notify-message.js';
 
 const app: Application = express();
 
@@ -49,7 +50,7 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     res.status(err.statusCode).json({ status: err.status ,error: err.message });
   }else{
     logger.error(`Global error in app.ts: ${err}`);
-    res.status(500).json({ status: 500, message: messageLog.internalServerError });
+    res.status(500).json({ status: 500, message: errorMessage.internalServerError });
   }
 });
 
@@ -75,7 +76,7 @@ const startServer = async (): Promise<void> => {
     const roleBaseData=new RolesBaseData();
 
     await AppDataSource.initialize();
-    logger.silly(messageLog.databaseInitialize+' in app.ts');
+    logger.silly(notifyMessage.databaseInitialize+' in app.ts');
 
     logger.silly('Insert base data in tables before starting server.');
     await statusBaseData.insertBaseStatusData();

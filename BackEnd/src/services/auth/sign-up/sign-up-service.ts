@@ -8,9 +8,9 @@ import {
   signUpInput,
   signUpSchema,
 } from '../../../zod-schema/auth-schema/sign-up-shcema.js';
-import { messageLog } from '../../../utils/message-handling.js';
 import { ErrorHandler } from '../../../utils/error-handling.js';
 import { z } from 'zod';
+import { errorMessage } from '../../../utils/message/error-message.js';
 
 export class SignUpService {
   static async signUp(data: signUpInput) {
@@ -28,7 +28,7 @@ export class SignUpService {
       //Throw error if user exists
       if (existingUser) {
         logger.info(`User already exists ${existingUser}`);
-        throw new ErrorHandler(messageLog.usernameAlreadyExist, 406);
+        throw new ErrorHandler(errorMessage.usernameAlreadyExist, 406);
       }
 
       //Create hashed password
@@ -50,7 +50,7 @@ export class SignUpService {
       //Checking role or status null
       if (!role || !status) {
         logger.error(`Can't find role or status`);
-        throw new ErrorHandler(messageLog.errorInCreateAccount, 404);
+        throw new ErrorHandler(errorMessage.errorInCreateAccount, 404);
       }
 
       //Create user
@@ -77,7 +77,7 @@ export class SignUpService {
       if(error instanceof z.ZodError){
         throw error;
       }
-      throw new ErrorHandler(messageLog.internalServerError, 500);
+      throw new ErrorHandler(errorMessage.internalServerError, 500);
     }
   }
 }

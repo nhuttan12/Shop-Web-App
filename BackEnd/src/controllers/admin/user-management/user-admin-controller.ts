@@ -3,7 +3,8 @@ import { NextFunction, Request, Response } from 'express';
 import { UserService } from '../../../services/admin/users-service/user-service.js';
 import { ErrorHandler } from '../../../utils/error-handling.js';
 import logger from '../../../utils/logger.js';
-import { messageLog } from '../../../utils/message-handling.js';
+import { errorMessage } from '../../../utils/message/error-message.js';
+import { notifyMessage } from '../../../utils/message/notify-message.js';
 
 export class UserController {
   static async getUsers(req: Request, res: Response, next: NextFunction) {
@@ -19,12 +20,12 @@ export class UserController {
 
       if (!users) {
         logger.error('No users found');
-        throw new ErrorHandler(messageLog.userNotFound, 404); //No users found
+        throw new ErrorHandler(errorMessage.userNotFound, 404); //No users found
       }
       res.status(200).json(users);
     } catch (error) {
       logger.error(
-        messageLog.errorInUserAdminController + ' getUsers function',
+        errorMessage.errorInUserAdminController + ' getUsers function',
         error
       );
       next(error);
@@ -45,7 +46,7 @@ export class UserController {
       //Checking id is number
       if (isNaN(id)) {
         logger.error(`Invalid user id ${id}`);
-        throw new ErrorHandler(messageLog.invalidUserId, 400);
+        throw new ErrorHandler(errorMessage.invalidUserId, 400);
       }
 
       //Get user information from UserService and send response to client
@@ -54,12 +55,12 @@ export class UserController {
 
       if (!users) {
         logger.error(`User not found with id ${id}`);
-        throw new ErrorHandler(messageLog.userNotFound, 404); //user not found
+        throw new ErrorHandler(errorMessage.userNotFound, 404); //user not found
       }
       res.status(200).json(users);
     } catch (error) {
       logger.error(
-        messageLog.errorInUserAdminController + ' getUserById function:',
+        errorMessage.errorInUserAdminController + ' getUserById function:',
         error
       );
       next(error);
@@ -80,7 +81,7 @@ export class UserController {
       //check user name is existing
       if(!name){
         logger.error('Name is null');
-        throw new ErrorHandler(messageLog.dataInvalid, 400); //data missing required fields
+        throw new ErrorHandler(errorMessage.dataInvalid, 400); //data missing required fields
       }
 
       //Get user information from UserService and send response to client
@@ -89,12 +90,12 @@ export class UserController {
 
       if (!users) {
         logger.error(`User not found with name ${name}`);
-        throw new ErrorHandler(messageLog.userNotFound, 404); //user not found
+        throw new ErrorHandler(errorMessage.userNotFound, 404); //user not found
       }
       res.status(200).json(users);
     } catch (error) {
       logger.error(
-        messageLog.errorInUserAdminController + ' getUserByName function:',
+        errorMessage.errorInUserAdminController + ' getUserByName function:',
         error
       );
       next(error);
@@ -110,7 +111,7 @@ export class UserController {
       //Checking id is number
       if (isNaN(id)) {
         logger.error(`Invalid user id ${id}`);
-        throw new ErrorHandler(messageLog.invalidUserId, 400);
+        throw new ErrorHandler(errorMessage.invalidUserId, 400);
       }
 
       //Get user data from request body
@@ -122,7 +123,7 @@ export class UserController {
       //check if all required fields are provided
       if (!name || !password || !role || !status) {
         logger.error('Data missing required fields');
-        throw new ErrorHandler(messageLog.dataInvalid, 400);
+        throw new ErrorHandler(errorMessage.dataInvalid, 400);
       }
 
       //Update user
@@ -137,13 +138,13 @@ export class UserController {
 
       //check if user is updated successfully
       if (result.affected && result.affected > 1) {
-        res.status(200).json({ message: messageLog.dataUpdated });
+        res.status(200).json({ message: notifyMessage.dataUpdated });
       } else {
-        throw new ErrorHandler(messageLog.errorInUpdateUserInfo, 500);
+        throw new ErrorHandler(errorMessage.errorInUpdateUserInfo, 500);
       }
     } catch (error) {
       logger.error(
-        messageLog.errorInUserAdminController + ' updateUser function: ',
+        errorMessage.errorInUserAdminController + ' updateUser function: ',
         error
       );
       next(error);
@@ -159,20 +160,20 @@ export class UserController {
       //Checking id is number
       if (isNaN(id)) {
         logger.error(`Invalid user id ${id}`);
-        throw new ErrorHandler(messageLog.invalidUserId, 400);
+        throw new ErrorHandler(errorMessage.invalidUserId, 400);
       }
 
       //Update user
       logger.silly('Ban user');
       const result = await UserService.banUser(id);
       if (result.affected && result.affected > 0) {
-        res.status(200).json({ message: messageLog.userBanned });
+        res.status(200).json({ message: errorMessage.userBanned });
       } else {
-        throw new ErrorHandler(messageLog.errorInBanUserBaseOnId, 500);
+        throw new ErrorHandler(errorMessage.errorInBanUserBaseOnId, 500);
       }
     } catch (error) {
       logger.error(
-        messageLog.errorInUserAdminController + ' banUser function',
+        errorMessage.errorInUserAdminController + ' banUser function',
         error
       );
       next(error);

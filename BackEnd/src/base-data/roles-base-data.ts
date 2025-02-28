@@ -2,7 +2,7 @@ import logger from '../utils/logger.js';
 import { Role } from '../entities/Role.js';
 import { Status } from '../entities/Status.js';
 import { ErrorHandler } from '../utils/error-handling.js';
-import { messageLog } from '../utils/message-handling.js';
+import { messageLog } from '../utils/message/notify-message.js';
 
 export class RolesBaseData {
   async insertBaseRoleData() {

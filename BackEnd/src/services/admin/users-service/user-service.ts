@@ -4,7 +4,7 @@ import { Status } from '../../../entities/Status.js';
 import { User } from '../../../entities/User.js';
 import { ErrorHandler } from '../../../utils/error-handling.js';
 import logger from '../../../utils/logger.js';
-import { messageLog } from '../../../utils/message-handling.js';
+import { errorMessage } from '../../../utils/message/error-message.js';
 import {
   UserUpdateInput,
   userUpdateSchema,
@@ -45,10 +45,10 @@ export class UserService {
       };
     } catch (error) {
       logger.error(
-        messageLog.errorInUserService + ' get users function',
+        errorMessage.errorInUserService + ' get users function',
         error
       );
-      throw new ErrorHandler(messageLog.errorInGetUsersInfo, 500);
+      throw new ErrorHandler(errorMessage.errorInGetUsersInfo, 500);
     }
   }
 
@@ -77,7 +77,7 @@ export class UserService {
       logger.debug(`Check user list`);
       if (!users) {
         logger.error('User not found');
-        throw new ErrorHandler(messageLog.userNotExist, 404);
+        throw new ErrorHandler(errorMessage.userNotExist, 404);
       }
 
       //loop through users array and convert all elements to userDTO objects
@@ -99,10 +99,10 @@ export class UserService {
       };
     } catch (error) {
       logger.error(
-        messageLog.errorInUserService + ' get userById function:',
+        errorMessage.errorInUserService + ' get userById function:',
         error
       );
-      throw new ErrorHandler(messageLog.errorInGetUserInfoById, 500);
+      throw new ErrorHandler(errorMessage.errorInGetUserInfoById, 500);
     }
   }
 
@@ -131,7 +131,7 @@ export class UserService {
       logger.debug(`Check user list`);
       if (!users) {
         logger.error('User not found');
-        throw new ErrorHandler(messageLog.userNotExist, 404);
+        throw new ErrorHandler(errorMessage.userNotExist, 404);
       }
 
       //loop through users array and convert all elements to userDTO objects
@@ -153,10 +153,10 @@ export class UserService {
       };
     } catch (error) {
       logger.error(
-        messageLog.errorInUserService + ' get getUserByName function:',
+        errorMessage.errorInUserService + ' get getUserByName function:',
         error
       );
-      throw new ErrorHandler(messageLog.errorInGetUserInfoById, 500);
+      throw new ErrorHandler(errorMessage.errorInGetUserInfoById, 500);
     }
   }
 
@@ -171,7 +171,7 @@ export class UserService {
       //Check user exist
       if (!user) {
         logger.error('User not found');
-        throw new ErrorHandler(messageLog.userNotExist, 404);
+        throw new ErrorHandler(errorMessage.userNotExist, 404);
       }
 
       //Get role by name
@@ -181,7 +181,7 @@ export class UserService {
       //Check role exist
       if (!role) {
         logger.error('Role not found');
-        throw new ErrorHandler(messageLog.invalidRole, 404);
+        throw new ErrorHandler(errorMessage.invalidRole, 404);
       }
 
       //Get status by name
@@ -193,7 +193,7 @@ export class UserService {
       //Check status exist
       if (!status) {
         logger.error('Status not found');
-        throw new ErrorHandler(messageLog.invalidStatus, 404);
+        throw new ErrorHandler(errorMessage.invalidStatus, 404);
       }
 
       //Update user
@@ -209,10 +209,10 @@ export class UserService {
         .execute();
     } catch (error) {
       logger.error(
-        messageLog.errorInUserService + ' updateUser function:',
+        errorMessage.errorInUserService + ' updateUser function:',
         error
       );
-      throw new ErrorHandler(messageLog.errorInUpdateUserInfo, 500);
+      throw new ErrorHandler(errorMessage.errorInUpdateUserInfo, 500);
     }
   }
 
@@ -225,7 +225,7 @@ export class UserService {
       //checking user exists
       if (!user) {
         logger.error('User not found');
-        throw new ErrorHandler(messageLog.productNotFound, 404);
+        throw new ErrorHandler(errorMessage.productNotFound, 404);
       }
 
       //find status with status name
@@ -235,7 +235,7 @@ export class UserService {
       //checking status exists
       if (!status) {
         logger.error('Status not found');
-        throw new ErrorHandler(messageLog.invalidStatus, 404);
+        throw new ErrorHandler(errorMessage.invalidStatus, 404);
       }
 
       //soft user product
@@ -248,8 +248,8 @@ export class UserService {
         .where('id= :id', { id })
         .execute();
     } catch (error) {
-      logger.error(messageLog.errorInUserService + ' banUser function', error);
-      throw new ErrorHandler(messageLog.errorInBanUserBaseOnId, 500);
+      logger.error(errorMessage.errorInUserService + ' banUser function', error);
+      throw new ErrorHandler(errorMessage.errorInBanUserBaseOnId, 500);
     }
   }
 }

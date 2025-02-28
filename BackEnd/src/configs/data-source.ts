@@ -4,7 +4,8 @@ import { join } from 'path';
 
 import { env } from './env.js';
 import logger from '../utils/logger.js';
-import { messageLog } from '../utils/message-handling.js';
+import { notifyMessage } from '../utils/message/notify-message.js';
+import { errorMessage } from '../utils/message/error-message.js';
 
 const entitiesSrc: string[] = [join(process.cwd(), 'src', 'entities', '*.ts')];
 const migrationsSrc: string[] = [
@@ -38,5 +39,5 @@ export const AppDataSource = new DataSource({
 });
 
 AppDataSource.initialize()
-  .then(() => logger.debug(messageLog.databaseInitialize))
-  .catch(() => logger.error(messageLog.databaseNotInitialize));
+  .then(() => logger.debug(notifyMessage.databaseInitialize))
+  .catch(() => logger.error(errorMessage.databaseNotInitialize));

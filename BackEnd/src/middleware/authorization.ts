@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
-import { messageLog } from '../utils/message-handling.js';
 import { AppAbility, defineAbilitiesFor } from '../utils/abilities.js';
 import { User } from '../entities/User.js';
 import logger from '../utils/logger.js';
+import { errorMessage } from '../utils/message/error-message.js';
 
 export function checkAbility(action: string, subject: string | object) {
   return (req: Request, res: Response, next: NextFunction) => {
@@ -13,8 +13,8 @@ export function checkAbility(action: string, subject: string | object) {
     //check user information exists
     logger.silly('Check user information exists');
     if (!user) {
-      logger.debug(messageLog.userNotFound);
-      res.status(401).json({ error: messageLog.userIsNotAllowedToPerformAction });
+      logger.debug(errorMessage.userNotFound);
+      res.status(401).json({ error: errorMessage.userIsNotAllowedToPerformAction });
       return;
     }
 
@@ -32,7 +32,7 @@ export function checkAbility(action: string, subject: string | object) {
       logger.silly('user have no permission');
       res
         .status(403)
-        .json({ error: messageLog.userIsNotAllowedToPerformAction });
+        .json({ error: errorMessage.userIsNotAllowedToPerformAction });
       return;
     }
   };

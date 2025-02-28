@@ -1,8 +1,9 @@
 import e, { NextFunction, Request, Response } from 'express';
 import logger from '../../../utils/logger.js';
 import { ErrorHandler } from '../../../utils/error-handling.js';
-import { messageLog } from '../../../utils/message-handling.js';
 import { ProductService } from '../../../services/admin/products-service/product-service.js';
+import { errorMessage } from '../../../utils/message/error-message.js';
+import { notifyMessage } from '../../../utils/message/notify-message.js';
 
 export class ProductAdminController {
   static async getProducts(req: Request, res: Response, next: NextFunction) {
@@ -19,7 +20,7 @@ export class ProductAdminController {
       res.status(200).json(result);
     } catch (error) {
       logger.error(
-        messageLog.errorInProductAdminController + ' getProducts function:',
+        errorMessage.errorInProductAdminController + ' getProducts function:',
         error
       );
       next(error);
@@ -45,21 +46,21 @@ export class ProductAdminController {
         !imageUrl ||
         !category
       ) {
-        logger.error(messageLog.dataInvalid);
-        throw new ErrorHandler(messageLog.dataInvalid, 400);
+        logger.error(errorMessage.dataInvalid);
+        throw new ErrorHandler(errorMessage.dataInvalid, 400);
       }
 
       //Checking id is number 
       if(isNaN(id)){
         logger.error(`Invalid product id ${id}`);
-        throw new ErrorHandler(messageLog.invalidProductId, 400);
+        throw new ErrorHandler(errorMessage.invalidProductId, 400);
       }
     } catch (error) {
       logger.error(
-        messageLog.errorInProductAdminController + ' AddProduct function:',
+        errorMessage.errorInProductAdminController + ' AddProduct function:',
         error
       );
-      next(new ErrorHandler(messageLog.errorInAddProduct, 500));
+      next(new ErrorHandler(errorMessage.errorInAddProduct, 500));
     }
   }
   static async getProductById(req: Request, res: Response, next: NextFunction) {
@@ -76,7 +77,7 @@ export class ProductAdminController {
       //Checking id is number 
       if(isNaN(id)){
         logger.error(`Invalid product id ${id}`);
-        throw new ErrorHandler(messageLog.invalidProductId, 400);
+        throw new ErrorHandler(errorMessage.invalidProductId, 400);
       }
 
       //get user from ProductService base on id provided
@@ -86,7 +87,7 @@ export class ProductAdminController {
       res.status(200).json(result);
     } catch (error) {
       logger.error(
-        messageLog.errorInProductAdminController + ' getProductById function: ',
+        errorMessage.errorInProductAdminController + ' getProductById function: ',
         error
       );
       next(error);
@@ -106,7 +107,7 @@ export class ProductAdminController {
       //check user name is existing
       if(!name){
         logger.error('Name is null');
-        throw new ErrorHandler(messageLog.dataInvalid, 400); //data missing required fields
+        throw new ErrorHandler(errorMessage.dataInvalid, 400); //data missing required fields
       }
 
       //get user from ProductService base on id provided
@@ -116,7 +117,7 @@ export class ProductAdminController {
       res.status(200).json(result);
     } catch (error) {
       logger.error(
-        messageLog.errorInProductAdminController + ' getProductByName function: ',
+        errorMessage.errorInProductAdminController + ' getProductByName function: ',
         error
       );
       next(error);
@@ -132,17 +133,17 @@ export class ProductAdminController {
       //Checking id is number 
       if(isNaN(id)){
         logger.error(`Invalid product id ${id}`);
-        throw new ErrorHandler(messageLog.invalidProductId, 400);
+        throw new ErrorHandler(errorMessage.invalidProductId, 400);
       }
 
       //Update user
       logger.silly('Delete product');
       await ProductService.deleteProduct(id);
 
-      res.status(200).json({message: messageLog.productDeleteSuccess});
+      res.status(200).json({message: notifyMessage.productDeleteSuccess});
     } catch (error) {
       logger.error(
-        messageLog.errorInProductAdminController + ' deleteProduct function: ',
+        errorMessage.errorInProductAdminController + ' deleteProduct function: ',
         error
       );
       next(error);

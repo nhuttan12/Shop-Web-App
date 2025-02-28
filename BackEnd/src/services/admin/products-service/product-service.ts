@@ -3,8 +3,8 @@ import { ProductAdminDTO } from '../../../dtos/admin/product-admin-dto.js';
 import { Product } from '../../../entities/Product.js';
 import { ErrorHandler } from '../../../utils/error-handling.js';
 import logger from '../../../utils/logger.js';
-import { messageLog } from '../../../utils/message-handling.js';
 import { Status } from '../../../entities/Status.js';
+import { errorMessage } from '../../../utils/message/error-message.js';
 
 export class ProductService {
   static async getProducts(page: number, limit: number) {
@@ -42,10 +42,10 @@ export class ProductService {
       };
     } catch (error) {
       logger.error(
-        messageLog.errorInproductService + ' getProducts function',
+        errorMessage.errorInproductService + ' getProducts function',
         error
       );
-      throw new ErrorHandler(messageLog.errorInGetAllProducts, 500);
+      throw new ErrorHandler(errorMessage.errorInGetAllProducts, 500);
     }
   }
 
@@ -88,10 +88,10 @@ export class ProductService {
       };
     } catch (error) {
       logger.error(
-        messageLog.errorInproductService + ' getProductById function',
+        errorMessage.errorInproductService + ' getProductById function',
         error
       );
-      throw new ErrorHandler(messageLog.errorInGetProductById, 500);
+      throw new ErrorHandler(errorMessage.errorInGetProductById, 500);
     }
   }
 
@@ -134,10 +134,10 @@ export class ProductService {
       };
     } catch (error) {
       logger.error(
-        messageLog.errorInproductService + ' getProductByName function',
+        errorMessage.errorInproductService + ' getProductByName function',
         error
       );
-      throw new ErrorHandler(messageLog.errorInGetProductByName, 500);
+      throw new ErrorHandler(errorMessage.errorInGetProductByName, 500);
     }
   }
 
@@ -150,7 +150,7 @@ export class ProductService {
       //checking product exists
       if (!product) {
         logger.error('Product not found');
-        throw new ErrorHandler(messageLog.productNotFound, 404);
+        throw new ErrorHandler(errorMessage.productNotFound, 404);
       }
 
       //find status with status name
@@ -160,7 +160,7 @@ export class ProductService {
       //checking status exists
       if (!status) {
         logger.error('Status not found');
-        throw new ErrorHandler(messageLog.invalidStatus, 404);
+        throw new ErrorHandler(errorMessage.invalidStatus, 404);
       }
 
       //soft delete product
@@ -174,10 +174,10 @@ export class ProductService {
       logger.debug('Status updated');
     } catch (error) {
       logger.error(
-        messageLog.errorInproductService + ' deleteProduct function',
+        errorMessage.errorInproductService + ' deleteProduct function',
         error
       );
-      throw new ErrorHandler(messageLog.errorInDeleteProduct, 500);
+      throw new ErrorHandler(errorMessage.errorInDeleteProduct, 500);
     }
   }
 }

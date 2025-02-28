@@ -3,9 +3,10 @@ import { NextFunction, Request, Response } from 'express';
 import { SignUpService } from '../../services/auth/sign-up/sign-up-service.js';
 import { User } from '../../entities/User.js';
 import logger from '../../utils/logger.js';
-import { messageLog } from '../../utils/message-handling.js';
 import { z } from 'zod';
 import { ErrorHandler } from '../../utils/error-handling.js';
+import { notifyMessage } from '../../utils/message/notify-message.js';
+import { errorMessage } from '../../utils/message/error-message.js';
 
 export class SignUpController {
   static async signUp(req: Request, res: Response, next: NextFunction) {
@@ -25,7 +26,7 @@ export class SignUpController {
         retypePassword,
       });
 
-      res.status(201).json({ message: messageLog.userCreateSuccess });
+      res.status(201).json({ message: notifyMessage.userCreateSuccess });
     } catch (error: any) {
       logger.error(`Error in sign-up-controller: ${error}`);
       //if zod's error, return the detail message
@@ -36,7 +37,7 @@ export class SignUpController {
         });
         return;
       }else{
-        next(new ErrorHandler(messageLog.internalServerError, 500));
+        next(new ErrorHandler(errorMessage.internalServerError, 500));
       }
     }
   }

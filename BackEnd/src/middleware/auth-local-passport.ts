@@ -4,7 +4,7 @@ import passport from 'passport';
 import { env } from '../configs/env.js';
 import { ErrorHandler } from '../utils/error-handling.js';
 import logger from '../utils/logger.js';
-import { messageLog } from '../utils/message-handling.js';
+import { errorMessage } from '../utils/message/error-message.js';
 
 export const authenticateLocal = (
   req: Request,
@@ -31,7 +31,7 @@ export const authenticateLocal = (
         } else {
           logger.info(`Invalid credentials`);
           return next(
-            new ErrorHandler(messageLog.invalidUsernameOrPassword, 406)
+            new ErrorHandler(errorMessage.invalidUsernameOrPassword, 406)
           );
         }
       }
