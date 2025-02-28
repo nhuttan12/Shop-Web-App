@@ -8,4 +8,15 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  define:{
+    'process.env':{}
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      // Thêm định nghĩa global để polyfill process nếu cần
+      define: {
+        global: 'globalThis'
+      }
+    }
+  }
 })
