@@ -5,14 +5,13 @@ import { Button, InputAdornment, Stack, TextField } from '@mui/material';
 import { Strings } from '../constants/Strings';
 import EmailIcon from '@mui/icons-material/Email';
 import LockClockIcon from '@mui/icons-material/LockClock';
-import { notifyMessage } from '../constants/NotificationMessage';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { errorMessage } from '../constants/ErrorMessage';
-import { signInSchema } from '../schemas/SignUpSchema';
-import logger from '../utils/logger';
+import { signUpSchema } from '../schemas/SignUpSchema';
+import debug from 'debug';
 
 const SignUp: React.FC = () => {
+	const log = debug('page:SignUp');
 	const navigate = useNavigate();
 
 	//state for form's data submission
@@ -28,12 +27,24 @@ const SignUp: React.FC = () => {
 	const [usernameError, setUsernameError] = useState<boolean>(false);
 	const [passwordError, setPasswordError] = useState<boolean>(false);
 
+	//state for helper text
+	const [usernameHelperText, setUsernameHelperText] = useState<string>('');
+	const [passwordHelperText, setPasswordHelperText] = useState<string>('');
+	const [retypePasswordHelperText, setRetypePasswordHelperText] =
+		useState<string>('');
+	const [emailHelperText, setEmailHelperText] = useState<string>('');
+
 	//reset state error to default: false
 	const resetError = () => {
 		setUsernameError(false);
 		setPasswordError(false);
 		setEmailError(false);
 		setRetypePasswordError(false);
+
+		setUsernameHelperText('');
+		setPasswordHelperText('');
+		setRetypePasswordHelperText('');
+		setEmailHelperText('');
 	};
 
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -47,30 +58,34 @@ const SignUp: React.FC = () => {
 			email: email.trim(),
 			retypePassword: retypePassword.trim(),
 		};
-		logger.debug('Form data:', formData);
+		log('Form data:', formData);
 
 		//validate form data using zod
-		const result = signInSchema.safeParse(formData);
-		logger.debug(`Result: ${result}`);
+		const result = signUpSchema.safeParse(formData);
+		log(`Result: ${result}`);
 
 		//checking if any field has error, set state of error to true
 		if (!result.success) {
 			result.error.errors.forEach((issue) => {
 				if (issue.path.includes('username')) {
 					setUsernameError(true);
+					setUsernameHelperText(issue.message);
 				}
 				if (issue.path.includes('email')) {
 					setEmailError(true);
+					setEmailHelperText(issue.message);
 				}
 				if (issue.path.includes('password')) {
 					setPasswordError(true);
+					setPasswordHelperText(issue.message);
 				}
 				if (issue.path.includes('retypePassword')) {
 					setRetypePasswordError(true);
+					setRetypePasswordHelperText(issue.message);
 				}
 			});
 		} else {
-			logger.silly('Logging successful');
+			log('Sign up successful');
 			navigate('/sign-in');
 		}
 	};
@@ -95,9 +110,7 @@ const SignUp: React.FC = () => {
 								setUsername(e.target.value)
 							}
 							error={usernameError}
-							helperText={
-								usernameError ? notifyMessage.pleaseFillInUsername : ''
-							}
+							helperText={usernameError ? usernameHelperText : ''}
 							InputProps={{
 								endAdornment: (
 									<InputAdornment position='end'>
@@ -116,7 +129,7 @@ const SignUp: React.FC = () => {
 								setEmail(e.target.value)
 							}
 							error={emailError}
-							helperText={emailError ? notifyMessage.pleaseFillINEmail : ''}
+							helperText={emailError ? emailHelperText : ''}
 							InputProps={{
 								endAdornment: (
 									<InputAdornment position='end'>
@@ -135,9 +148,7 @@ const SignUp: React.FC = () => {
 								setPassword(e.target.value)
 							}
 							error={passwordError}
-							helperText={
-								passwordError ? notifyMessage.plaeseFillINPassword : ''
-							}
+							helperText={passwordError ? passwordHelperText : ''}
 							InputProps={{
 								endAdornment: (
 									<InputAdornment position='end'>
@@ -157,11 +168,7 @@ const SignUp: React.FC = () => {
 								setRetypePassword(e.target.value)
 							}
 							error={retypePasswordError}
-							helperText={
-								retypePasswordError
-									? errorMessage.retypePasswordHaveToSamePassword
-									: ''
-							}
+							helperText={retypePasswordError ? retypePasswordHelperText : ''}
 							InputProps={{
 								endAdornment: (
 									<InputAdornment position='end'>
@@ -171,7 +178,14 @@ const SignUp: React.FC = () => {
 							}}
 						/>
 					</Stack>
-					<div className='w-full pt-3'>
+					<div className='w-full pt-1 flex flex-col'>
+						<div className='self-end pb-1.5'>
+							<span>
+								<a href='/sign-in' className='hover:text-blue-500'>
+									{Strings.haveAnAccount}
+								</a>
+							</span>
+						</div>
 						<Button
 							variant='contained'
 							sx={{
@@ -185,7 +199,7 @@ const SignUp: React.FC = () => {
 							type='submit'
 							startIcon={<KeyboardTabIcon />}
 						>
-							Đăng ký
+							{Strings.signUp}
 						</Button>
 					</div>
 				</form>

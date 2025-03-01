@@ -6,34 +6,64 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import { useState } from 'react';
-import { notifyMessage } from '../constants/NotificationMessage';
 import { Strings } from '../constants/Strings';
+import debug from 'debug';
+import { useNavigate } from 'react-router-dom';
+import { signInSchema } from '../schemas/SignInSchema';
 
 const SignIn: React.FC = () => {
+	const log = debug('page:SignIn');
+	const navigate = useNavigate();
+	//state for form's data submission
 	const [username, setUsername] = useState<string>('');
 	const [password, setPassword] = useState<string>('');
+
+	//state for error messages
 	const [usernameError, setUsernameError] = useState<boolean>(false);
 	const [passwordError, setPasswordError] = useState<boolean>(false);
 
+	//state for helper text
+	const [usernameHelperText, setUsernameHelperText] = useState<string>('');
+	const [passwordHelperText, setPasswordHelperText] = useState<string>('');
+
+	const resetError = () => {
+		setUsernameError(false);
+		setPasswordError(false);
+
+		setUsernameHelperText('');
+		setPasswordHelperText('');
+	};
+
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		let valid: boolean = true;
+		resetError();
 
-		if (username.trim() === '') {
-			setUsernameError(true);
-			valid = false;
-		} else {
-			setUsernameError(false);
-		}
-		if (password.trim() === '') {
-			setPasswordError(true);
-			valid = false;
-		} else {
-			setPasswordError(false);
-		}
+		//create from data get from use state
+		const formData = {
+			username: username.trim(),
+			password: password.trim(),
+		};
+		log('Form data:', formData);
 
-		if (valid) {
-			console.log('Login successful');
+		//validate form data using zod
+		const result = signInSchema.safeParse(formData);
+		log(`Result: ${result}`);
+
+		//checking if any field has error, set state of error to true
+		if (!result.success) {
+			result.error.errors.forEach((issue) => {
+				if (issue.path.includes('username')) {
+					setUsernameError(true);
+					setUsernameHelperText(issue.message);
+				}
+				if (issue.path.includes('password')) {
+					setPasswordError(true);
+					setPasswordHelperText(issue.message);
+				}
+			});
+		} else {
+			log('Sign in successful');
+			navigate('/home');
 		}
 	};
 
@@ -57,9 +87,7 @@ const SignIn: React.FC = () => {
 								setUsername(e.target.value)
 							}
 							error={usernameError}
-							helperText={
-								usernameError ? notifyMessage.pleaseFillInUsername : ''
-							}
+							helperText={usernameError ? usernameHelperText : ''}
 							InputProps={{
 								endAdornment: (
 									<InputAdornment position='end'>
@@ -78,9 +106,7 @@ const SignIn: React.FC = () => {
 								setPassword(e.target.value)
 							}
 							error={passwordError}
-							helperText={
-								passwordError ? notifyMessage.plaeseFillINPassword : ''
-							}
+							helperText={passwordError ? passwordHelperText : ''}
 							InputProps={{
 								endAdornment: (
 									<InputAdornment position='end'>
@@ -91,28 +117,10 @@ const SignIn: React.FC = () => {
 						/>
 					</Stack>
 
-					<Stack
-						spacing={2}
-						direction='column-reverse'
-						display={'flex'}
-						paddingTop={'2'}
-					>
-						<Button
-							variant='contained'
-							sx={{
-								backgroundColor: '#3B82F6',
-								color: '#ffffff',
-								'&:hover': {
-									backgroundColor: '#2563EB',
-								},
-							}}
-							type='submit'
-							startIcon={<KeyboardTabIcon />}
-						>
-							{Strings.signIn}
-						</Button>
-						<Stack direction={'row'} justifyContent={'space-between'}>
-							<div className='self-start'>  
+					
+					<div className='w-full pt-1.5 flex flex-col'>
+          <Stack direction={'row'} justifyContent={'space-between'} paddingBottom={1}>
+							<div className='self-start'>
 								<span>
 									<a href='/sign-up' className='hover:text-blue-500'>
 										{Strings.signUp}
@@ -127,7 +135,21 @@ const SignIn: React.FC = () => {
 								</span>
 							</div>
 						</Stack>
-					</Stack>
+						<Button
+							variant='contained'
+							sx={{
+								backgroundColor: '#3B82F6',
+								color: '#ffffff',
+								'&:hover': {
+									backgroundColor: '#2563EB',
+								},
+							}}
+							type='submit'
+							startIcon={<KeyboardTabIcon />}
+						>
+							{Strings.signIn}
+						</Button>
+					</div>
 				</form>
 			</div>
 		</div>
