@@ -32,4 +32,5 @@ export const env = {
   SECURE: process.env.SECURE!,
   API_KEY: process.env.API_KEY!,
   API_SECRET: process.env.API_SECRET!,
+  FOLDER_NAME: process.env.FOLDER_NAME!,
 };
