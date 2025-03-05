@@ -1,12 +1,10 @@
+import { format } from 'winston';
 //import library
 import 'reflect-metadata';
 import express, { Application, NextFunction, Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import passport from 'passport';
-import cors from 'cors'; 
-import {v2 as cloudinary} from 'cloudinary';
-import multer from 'multer';
-// import 
+import cors from 'cors';
 
 //import variables from file
 import './utils/passport.js';
@@ -19,16 +17,19 @@ import { StatusBaseData } from './base-data/status-base-data.js';
 import { RolesBaseData } from './base-data/roles-base-data.js';
 import { errorMessage } from './utils/message/error-message.js';
 import { notifyMessage } from './utils/message/notify-message.js';
+import { CloudinaryStorageRoute } from './routes/cloudinary/cloudinary-route.js';
 
 const app: Application = express();
 
 //config for cors
-app.use(cors({ 
-  origin: 'localhost:3000', 
-  preflightContinue: true,
-  optionsSuccessStatus: 200,
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE'
-}))
+app.use(
+  cors({
+    origin: 'localhost:3000',
+    preflightContinue: true,
+    optionsSuccessStatus: 200,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  })
+);
 
 //config for body parser
 app.use(bodyParser.json());
@@ -39,44 +40,34 @@ app.use(passport.initialize());
 
 //config for routes
 app.use('/auth', authRoute);
-
 app.use('/auth/v2', manageUserRoute);
+app.use('/uploads', CloudinaryStorageRoute);
 
 //config for global exception handler
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-  logger.error('Error message:',err.message);
-  if(err.isOperational){
-    logger.error('Error message is operational:',err.message);
-    res.status(err.statusCode).json({ status: err.status ,error: err.message });
-  }else{
+  logger.error('Error message:', err.message);
+  if (err.isOperational) {
+    logger.error('Error message is operational:', err.message);
+    res.status(err.statusCode).json({ status: err.status, error: err.message });
+  } else {
     logger.error(`Global error in app.ts: ${err}`);
-    res.status(500).json({ status: 500, message: errorMessage.internalServerError });
+    res
+      .status(500)
+      .json({ status: 500, message: errorMessage.internalServerError });
   }
 });
-
-//config for cloudinary
-(async function(){
-  cloudinary.config({
-    cloud_name: env.CLOUD_NAME,
-    secure: env.SECURE==='true',
-    api_key: env.API_KEY,
-    api_secret: env.API_SECRET,
-  })
-})();
-
-
-//config for multer
-const uploadCloud=multer({})
 
 //start server
 const startServer = async (): Promise<void> => {
   try {
-    logger.silly('Assuming we have base data insertion in separate classes and methods');
-    const statusBaseData=new StatusBaseData();
-    const roleBaseData=new RolesBaseData();
+    logger.silly(
+      'Assuming we have base data insertion in separate classes and methods'
+    );
+    const statusBaseData = new StatusBaseData();
+    const roleBaseData = new RolesBaseData();
 
     await AppDataSource.initialize();
-    logger.silly(notifyMessage.databaseInitialize+' in app.ts');
+    logger.silly(notifyMessage.databaseInitialize + ' in app.ts');
 
     logger.silly('Insert base data in tables before starting server.');
     await statusBaseData.insertBaseStatusData();
