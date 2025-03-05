@@ -38,4 +38,5 @@ export const errorMessage = {
   errorInDeleteProduct: 'Xóa sản phẩm không thành công',
   invalidUserId: 'Mã người dùng không hợp lệ',
   invalidProductId: 'Mã sản phẩm không hợp lệ',
+  fileUploadNotFound: 'Không tìm thấy file upload'
 };
