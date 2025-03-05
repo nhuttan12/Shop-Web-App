@@ -6,5 +6,10 @@ export const Strings = {
 	signUp: 'Đăng ký',
 	email: 'Email',
 	retypePassword: 'Nhập lại mật khẩu',
-  haveAnAccount: 'Đã có tài khoản'
+  haveAnAccount: 'Đã có tài khoản',
+  shopNameLabel: 'Shop Web App',
+  profile: 'Tài khoản của tôi',
+  order: 'Hóa đơn',
+  logout: 'Đăng xuất',
+  userProfile: 'Tài khoản người dùng'
 };

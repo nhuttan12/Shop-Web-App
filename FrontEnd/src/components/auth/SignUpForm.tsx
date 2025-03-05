@@ -1,37 +1,50 @@
 import KeyboardTabIcon from '@mui/icons-material/KeyboardTab';
 import LockIcon from '@mui/icons-material/Lock';
 import PersonIcon from '@mui/icons-material/Person';
-import { InputAdornment } from '@mui/material';
-import Button from '@mui/material/Button';
-import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
-import { useState } from 'react';
-import { Strings } from '../constants/Strings';
-import debug from 'debug';
+import { Button, InputAdornment, Stack, TextField } from '@mui/material';
+import { Strings } from '../../constants/Strings';
+import EmailIcon from '@mui/icons-material/Email';
+import LockClockIcon from '@mui/icons-material/LockClock';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { signInSchema } from '../schemas/SignInSchema';
+import { signUpSchema } from '../../schemas/SignUpSchema';
+import debug from 'debug';
 
-const SignIn: React.FC = () => {
-	const log = debug('page:SignIn');
+const SignUpForm: React.FC = () => {
+	const log = debug('page:SignUp');
 	const navigate = useNavigate();
+
 	//state for form's data submission
 	const [username, setUsername] = useState<string>('');
 	const [password, setPassword] = useState<string>('');
+	const [retypePassword, setRetypePassword] = useState<string>('');
+	const [email, setEmail] = useState<string>('');
 
 	//state for error messages
+	const [retypePasswordError, setRetypePasswordError] =
+		useState<boolean>(false);
+	const [emailError, setEmailError] = useState<boolean>(false);
 	const [usernameError, setUsernameError] = useState<boolean>(false);
 	const [passwordError, setPasswordError] = useState<boolean>(false);
 
 	//state for helper text
 	const [usernameHelperText, setUsernameHelperText] = useState<string>('');
 	const [passwordHelperText, setPasswordHelperText] = useState<string>('');
+	const [retypePasswordHelperText, setRetypePasswordHelperText] =
+		useState<string>('');
+	const [emailHelperText, setEmailHelperText] = useState<string>('');
 
+	//reset state error to default: false
 	const resetError = () => {
 		setUsernameError(false);
 		setPasswordError(false);
+		setEmailError(false);
+		setRetypePasswordError(false);
 
 		setUsernameHelperText('');
 		setPasswordHelperText('');
+		setRetypePasswordHelperText('');
+		setEmailHelperText('');
 	};
 
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -42,11 +55,13 @@ const SignIn: React.FC = () => {
 		const formData = {
 			username: username.trim(),
 			password: password.trim(),
+			email: email.trim(),
+			retypePassword: retypePassword.trim(),
 		};
 		log('Form data:', formData);
 
 		//validate form data using zod
-		const result = signInSchema.safeParse(formData);
+		const result = signUpSchema.safeParse(formData);
 		log(`Result: ${result}`);
 
 		//checking if any field has error, set state of error to true
@@ -56,21 +71,29 @@ const SignIn: React.FC = () => {
 					setUsernameError(true);
 					setUsernameHelperText(issue.message);
 				}
+				if (issue.path.includes('email')) {
+					setEmailError(true);
+					setEmailHelperText(issue.message);
+				}
 				if (issue.path.includes('password')) {
 					setPasswordError(true);
 					setPasswordHelperText(issue.message);
 				}
+				if (issue.path.includes('retypePassword')) {
+					setRetypePasswordError(true);
+					setRetypePasswordHelperText(issue.message);
+				}
 			});
 		} else {
-			log('Sign in successful');
-			navigate('/home');
+			log('Sign up successful');
+			navigate('/sign-in');
 		}
 	};
 
 	return (
 		<div className='flex min-h-screen items-center justify-center'>
 			<div className='flex h-auto w-xl flex-col items-center justify-start rounded-xl bg-green-100 p-6 pb-12 shadow-2xl'>
-				<div className='pb-6 text-7xl'>{Strings.signIn}</div>
+				<div className='pb-6 text-7xl'>{Strings.signUp}</div>
 				<form
 					action=''
 					onSubmit={handleSubmit}
@@ -97,6 +120,25 @@ const SignIn: React.FC = () => {
 							}}
 						/>
 						<TextField
+							id='outlined-basic'
+							label={Strings.email}
+							type='email'
+							variant='outlined'
+							value={email}
+							onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+								setEmail(e.target.value)
+							}
+							error={emailError}
+							helperText={emailError ? emailHelperText : ''}
+							InputProps={{
+								endAdornment: (
+									<InputAdornment position='end'>
+										<EmailIcon />
+									</InputAdornment>
+								),
+							}}
+						/>
+						<TextField
 							id='outlined-password-input'
 							label={Strings.password}
 							type='password'
@@ -115,26 +157,35 @@ const SignIn: React.FC = () => {
 								),
 							}}
 						/>
-					</Stack>
 
-					
-					<div className='w-full pt-1.5 flex flex-col'>
-          <Stack direction={'row'} justifyContent={'space-between'} paddingBottom={1}>
-							<div className='self-start'>
-								<span>
-									<a href='/sign-up' className='hover:text-blue-500'>
-										{Strings.signUp}
-									</a>
-								</span>
-							</div>
-							<div className='self-end'>
-								<span>
-									<a href='#' className='hover:text-blue-500'>
-										{Strings.forgotPassword}
-									</a>
-								</span>
-							</div>
-						</Stack>
+						<TextField
+							id='outlined-password-input'
+							label={Strings.retypePassword}
+							type='password'
+							autoComplete='current-password'
+							value={retypePassword}
+							onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+								setRetypePassword(e.target.value)
+							}
+							error={retypePasswordError}
+							helperText={retypePasswordError ? retypePasswordHelperText : ''}
+							InputProps={{
+								endAdornment: (
+									<InputAdornment position='end'>
+										<LockClockIcon />
+									</InputAdornment>
+								),
+							}}
+						/>
+					</Stack>
+					<div className='w-full pt-1 flex flex-col'>
+						<div className='self-end pb-1.5'>
+							<span>
+								<a href='/sign-in' className='hover:text-blue-500'>
+									{Strings.haveAnAccount}
+								</a>
+							</span>
+						</div>
 						<Button
 							variant='contained'
 							sx={{
@@ -143,11 +194,12 @@ const SignIn: React.FC = () => {
 								'&:hover': {
 									backgroundColor: '#2563EB',
 								},
+								width: '100%',
 							}}
 							type='submit'
 							startIcon={<KeyboardTabIcon />}
 						>
-							{Strings.signIn}
+							{Strings.signUp}
 						</Button>
 					</div>
 				</form>
@@ -156,4 +208,4 @@ const SignIn: React.FC = () => {
 	);
 };
 
-export default SignIn;
+export default SignUpForm;
