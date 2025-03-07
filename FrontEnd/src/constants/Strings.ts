@@ -11,5 +11,11 @@ export const Strings = {
   profile: 'Tài khoản của tôi',
   order: 'Hóa đơn',
   logout: 'Đăng xuất',
-  userProfile: 'Tài khoản người dùng'
+  userProfile: 'Tài khoản người dùng',
+  dashboard: 'Bảng thống kê',
+  revenue: 'Doanh thu',
+  manageInfo: 'Quản lý thông tin',
+  userInfoMangament: 'Quản lý thông tin người dùng',
+  productMangament: 'Quản lý sản phẩm',
+  orderInfoManagement: 'Quản lý thông tin đơn hàng',
 };
