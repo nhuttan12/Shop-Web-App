@@ -6,6 +6,9 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import { AppProvider } from '@toolpad/core/AppProvider';
 import { DashboardLayout } from '@toolpad/core/DashboardLayout';
 import { useDemoRouter } from '@toolpad/core/internal';
+import { Strings } from '../../constants/Strings';
+import BentoIcon from '@mui/icons-material/Bento';
+import CategoryIcon from '@mui/icons-material/Category';
 
 const demoTheme = createTheme({
   cssVariables: {
@@ -47,7 +50,7 @@ interface DemoProps {
   window?: () => Window;
 }
 
-export default function DashboardLayoutNavigationLinks(props: DemoProps) {
+export default function SideBar(props: DemoProps) {
   const { window } = props;
 
   const router = useDemoRouter('/home');
@@ -60,18 +63,18 @@ export default function DashboardLayoutNavigationLinks(props: DemoProps) {
     <AppProvider
       navigation={[
         {
-          segment: 'home',
-          title: 'Home',
-          icon: <DescriptionIcon />,
+          segment: Strings.productMangament,
+          title: Strings.productMangament,
+          icon: <BentoIcon />,
         },
         {
-          segment: 'about',
-          title: 'About Us',
-          icon: <DescriptionIcon />,
+          segment: Strings.categoryManagement,
+          title: Strings.categoryManagement,
+          icon: <CategoryIcon />,
         },
         {
-          segment: 'more',
-          title: 'Hello',
+          segment: Strings.orderInfoManagement,
+          title: Strings.orderInfoManagement,
           icon: <DescriptionIcon />,
         },
       ]}

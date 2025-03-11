@@ -1,9 +1,8 @@
 import React from 'react'
-import SideBar from '../../components/side-bar/SideBar'
 
-const Home = () => {
+const Home:React.FC = () => {
   return (
-    <div><SideBar/></div>
+    <div>Hello</div>
   )
 }
 
