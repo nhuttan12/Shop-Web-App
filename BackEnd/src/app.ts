@@ -24,7 +24,7 @@ const app: Application = express();
 //config for cors
 app.use(
   cors({
-    origin: 'localhost:3000',
+    origin: env.FRONT_END_HOST,
     preflightContinue: true,
     optionsSuccessStatus: 200,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
