@@ -7,7 +7,7 @@ const router = Router();
 
 //get all user route
 router.get(
-  '/users/:page',
+  '/users/:page?',
   authenticateJwt,
   checkAbility('read', 'User'),
   UserController.getUsers
