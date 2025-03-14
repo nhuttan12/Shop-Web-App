@@ -24,6 +24,7 @@ export const errorMessage = {
   activeStatusNotFound: 'Active status not found in database. Ensure status data is seeded first.',
   invalidStatus: 'Trạng thái bị lỗi',
   errorInProductAdminController: 'Error in ProductAdminController',
+  errorInCategoryAdminController: 'Error in ProductAdminController',
   errorInproductService: 'Error in Product Service',
   productNotFound: 'Không tìm thấy sản phẩm',
   errorInUserAdminController: 'Error in User Admin Controller',
@@ -32,11 +33,14 @@ export const errorMessage = {
   errorInUpdateUserInfo: 'Cập nhật thông tin người dùng không thành công',
   errorInBanUserBaseOnId: 'Khóa tài khoản người dùng không thành công',
   errorInGetAllProducts: 'Không thể hiển thị sản phẩm',
+  errorInGetAllCategories: 'Không thể hiển thị danh mục',
   errorInAddProduct: 'Không thể thêm sản phẩm',
   errorInGetProductById: 'Tìm sản phẩm bằng mã sản phẩm thất bại',
   errorInGetProductByName: 'Tìm sản phẩm bằng tên thất bại',
+  errorInGetCategoryByName: 'Tìm sản phẩm bằng tên thất bại',
   errorInDeleteProduct: 'Xóa sản phẩm không thành công',
   invalidUserId: 'Mã người dùng không hợp lệ',
   invalidProductId: 'Mã sản phẩm không hợp lệ',
+  invalidCategoryId: 'Mã danh mục không hợp lệ',
   fileUploadNotFound: 'Không tìm thấy file upload'
 };

@@ -100,7 +100,7 @@ export class ProductAdminController {
       const limit: number = 10;
       const name: string = req.params.name;
       logger.debug(
-        'User name from request: ' + name,
+        'Product name from request: ' + name,
         'page: ' + page + ' limit: ' + limit
       );
 
