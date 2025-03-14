@@ -8,10 +8,14 @@ import TextField from '@mui/material/TextField';
 import { useState } from 'react';
 import debug from 'debug';
 import axios from 'axios';
-
+import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
+
 import { Strings } from '../../constants/Strings';
 import { signInSchema } from '../../schemas/SignInSchema';
+import { env } from '../../configs/env';
+import { Endpoint } from '../../constants/Endpoint';
+import { errorMessage } from '../../constants/ErrorMessage';
 
 const SignInForm: React.FC = () => {
 	const log = debug('page:SignIn');
@@ -38,7 +42,7 @@ const SignInForm: React.FC = () => {
 		setPasswordHelperText('');
 	};
 
-	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		resetError();
 
@@ -65,20 +69,55 @@ const SignInForm: React.FC = () => {
 					setPasswordHelperText(issue.message);
 				}
 			});
-		} else {
-			log('Sign in successful');
-			navigate('/home');
+			return;
+		}
+		//call backend api
+		try {
+      Swal.fire({
+        title: Strings.currentlySignIn,
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+
+			setLoading(true);
+			const response = await axios.post(
+				env.VITE_BACK_END_SERVER_URL + Endpoint.signIn,
+				formData
+			);
+			log('Api response: ' + response.data);
+
+      // close modal when sign in is successful
+      Swal.close();
+
+			if (response.status === 200) {
+				localStorage.setItem('token', response.data.token);
+				navigate('/home');
+			}
+		} catch (error: unknown) {
+      // close modal when sign in is unsuccessful
+      Swal.close();
+
+			log('Error in sign-in: ' + error);
+
+			let message = errorMessage.error;
+			if (axios.isAxiosError(error) && error.response) {
+				message = error.response.data.message;
+			}
+
+			Swal.fire({
+				icon: 'error',
+				title: errorMessage.signInError,
+				text: message,
+			});
+
+			setUsernameError(true);
+			setUsernameHelperText(message);
+		} finally {
+			setLoading(false);
 		}
 	};
-
-	//call backend api
-	try {
-		setLoading(true);
-		const response = await axios.post('https://localhost:8080');
-    
-	} catch (error: any) {
-    log('Error: ' + error);
-  }
 
 	return (
 		<div className='flex min-h-screen items-center justify-center'>
@@ -162,8 +201,9 @@ const SignInForm: React.FC = () => {
 							}}
 							type='submit'
 							startIcon={<KeyboardTabIcon />}
+              disabled={loading}
 						>
-							{Strings.signIn}
+							{loading? Strings.currentlySignIn : Strings.signIn}
 						</Button>
 					</div>
 				</form>

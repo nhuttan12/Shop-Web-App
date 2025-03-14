@@ -19,4 +19,5 @@ export const Strings = {
   productMangament: 'Quản lý sản phẩm',
   orderInfoManagement: 'Quản lý thông tin đơn hàng',
   categoryManagement: 'Quản lý danh mục',
+  currentlySignIn: 'đang đăng nhập'
 };
