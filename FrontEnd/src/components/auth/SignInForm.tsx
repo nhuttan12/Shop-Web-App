@@ -6,9 +6,11 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import { useState } from 'react';
-import { Strings } from '../../constants/Strings';
 import debug from 'debug';
+import axios from 'axios';
+
 import { useNavigate } from 'react-router-dom';
+import { Strings } from '../../constants/Strings';
 import { signInSchema } from '../../schemas/SignInSchema';
 
 const SignInForm: React.FC = () => {
@@ -25,6 +27,8 @@ const SignInForm: React.FC = () => {
 	//state for helper text
 	const [usernameHelperText, setUsernameHelperText] = useState<string>('');
 	const [passwordHelperText, setPasswordHelperText] = useState<string>('');
+
+	const [loading, setLoading] = useState<boolean>(false);
 
 	const resetError = () => {
 		setUsernameError(false);
@@ -66,6 +70,15 @@ const SignInForm: React.FC = () => {
 			navigate('/home');
 		}
 	};
+
+	//call backend api
+	try {
+		setLoading(true);
+		const response = await axios.post('https://localhost:8080');
+    
+	} catch (error: any) {
+    log('Error: ' + error);
+  }
 
 	return (
 		<div className='flex min-h-screen items-center justify-center'>
@@ -117,9 +130,12 @@ const SignInForm: React.FC = () => {
 						/>
 					</Stack>
 
-					
-					<div className='w-full pt-1.5 flex flex-col'>
-          <Stack direction={'row'} justifyContent={'space-between'} paddingBottom={1}>
+					<div className='flex w-full flex-col pt-1.5'>
+						<Stack
+							direction={'row'}
+							justifyContent={'space-between'}
+							paddingBottom={1}
+						>
 							<div className='self-start'>
 								<span>
 									<a href='/sign-up' className='hover:text-blue-500'>

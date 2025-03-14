@@ -27,6 +27,6 @@ export default defineConfig({
     }
   },
   server: {
-    port: env.SERVER_PORT
+    port: env.VITE_SERVER_PORT
   }
 })
