@@ -9,6 +9,11 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signUpSchema } from '../../schemas/SignUpSchema';
 import debug from 'debug';
+import Swal from 'sweetalert2';
+import axios from 'axios';
+import { Endpoint } from '../../constants/Endpoint.ts';
+import { env } from '../../configs/env.ts';
+import { errorMessage } from '../../constants/ErrorMessage.ts';
 
 const SignUpForm: React.FC = () => {
 	const log = debug('page:SignUp');
@@ -34,6 +39,8 @@ const SignUpForm: React.FC = () => {
 		useState<string>('');
 	const [emailHelperText, setEmailHelperText] = useState<string>('');
 
+	const [loading, setLoading] = useState<boolean>(false);
+
 	//reset state error to default: false
 	const resetError = () => {
 		setUsernameError(false);
@@ -47,7 +54,28 @@ const SignUpForm: React.FC = () => {
 		setEmailHelperText('');
 	};
 
-	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+	const handleErrorHelperText = async (path: string, message: string) => {
+		switch (path) {
+			case 'username':
+				setUsernameError(true);
+				setUsernameHelperText(message);
+				break;
+			case 'email':
+				setEmailError(true);
+				setEmailHelperText(message);
+				break;
+			case 'password':
+				setPasswordError(true);
+				setPasswordHelperText(message);
+				break;
+			case 'retypePassword':
+				setRetypePasswordError(true);
+				setRetypePasswordHelperText(message);
+				break;
+		}
+	};
+
+	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		resetError();
 
@@ -84,9 +112,57 @@ const SignUpForm: React.FC = () => {
 					setRetypePasswordHelperText(issue.message);
 				}
 			});
-		} else {
-			log('Sign up successful');
-			navigate('/sign-in');
+			return;
+		}
+
+		//call backend api
+		try {
+			Swal.fire({
+				title: Strings.currentlySignIn,
+				allowOutsideClick: false,
+				didOpen: () => {
+					Swal.showLoading();
+				},
+			});
+
+			setLoading(true);
+			const response = await axios.post(
+				env.VITE_BACK_END_SERVER_URL + Endpoint.signUp,
+				formData
+			);
+			log('Api response: ' + response.data);
+
+			// close modal when sign in is successful
+			Swal.close();
+
+			if (response.status === 200) {
+				localStorage.setItem('token', response.data.token);
+				navigate('/home');
+			}
+		} catch (error: unknown) {
+			// close modal when sign in is unsuccessful
+			Swal.close();
+
+			log('Error in sign-in: ' + error);
+
+			let messageArray: string[] = [errorMessage.error];
+			let pathArray: string[] = [];
+			if (axios.isAxiosError(error) && error.response) {
+				messageArray = error.response.data.message;
+				pathArray = error.response.data.path;
+			}
+
+			for (let i = 0; i < messageArray.length; i++) {
+				await handleErrorHelperText(pathArray[i], messageArray[i]);
+			}
+
+			await Swal.fire({
+				icon: 'error',
+				title: errorMessage.signUpError,
+				text: messageArray.join('\n'),
+			});
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -178,7 +254,7 @@ const SignUpForm: React.FC = () => {
 							}}
 						/>
 					</Stack>
-					<div className='w-full pt-1 flex flex-col'>
+					<div className='flex w-full flex-col pt-1'>
 						<div className='self-end pb-1.5'>
 							<span>
 								<a href='/sign-in' className='hover:text-blue-500'>
@@ -199,7 +275,7 @@ const SignUpForm: React.FC = () => {
 							type='submit'
 							startIcon={<KeyboardTabIcon />}
 						>
-							{Strings.signUp}
+							{loading ? Strings.currentlySignUp : Strings.signUp}
 						</Button>
 					</div>
 				</form>
