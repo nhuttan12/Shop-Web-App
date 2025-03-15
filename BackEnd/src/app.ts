@@ -48,7 +48,10 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   logger.error('Error message:', err.message);
   if (err.isOperational) {
     logger.error('Error message is operational:', err.message);
-    res.status(err.statusCode).json({ status: err.status, error: err.message });
+    res.status(err.statusCode).json({
+      status: err.status,
+      message: err.message
+    });
   } else {
     logger.error(`Global error in app.ts: ${err}`);
     res

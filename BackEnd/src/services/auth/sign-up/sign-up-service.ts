@@ -12,6 +12,8 @@ import { ErrorHandler } from '../../../utils/error-handling.js';
 import { z } from 'zod';
 import { errorMessage } from '../../../utils/message/error-message.js';
 
+const defaultUsername = 'Người dùng';
+
 export class SignUpService {
   static async signUp(data: signUpInput) {
     try {
@@ -58,7 +60,7 @@ export class SignUpService {
       user.username = parsedData.username;
       user.password = hashedPassword;
       user.email = parsedData.email;
-      user.name = 'Người dùng';
+      user.name = defaultUsername;
       user.role = role;
       user.status = status;
       logger.debug(`User's info ${user}`);
@@ -74,10 +76,7 @@ export class SignUpService {
       return result;
     } catch (error: any) {
       logger.error(`Error in sign-up service: ${error}`);
-      if(error instanceof z.ZodError){
-        throw error;
-      }
-      throw new ErrorHandler(errorMessage.internalServerError, 500);
+      throw error;
     }
   }
 }
