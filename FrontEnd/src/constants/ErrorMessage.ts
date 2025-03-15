@@ -4,5 +4,6 @@ export const errorMessage = {
 	passwordHasAtLeast6Character: 'Mật khẩu phải có ít nhất 6 ký tự',
 	emailIsNotValid: 'Email không hợp lệ',
   signInError: 'Lỗi đăng nhập',
-  error: 'Có lỗi xảy ra, vui lòng thử lại sau'
+  error: 'Có lỗi xảy ra, vui lòng thử lại sau',
+  signUpError: 'Lỗi đăng ký',
 };

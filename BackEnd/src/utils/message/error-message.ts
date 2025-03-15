@@ -11,7 +11,7 @@ export const errorMessage = {
   usernameOrPasswordNotExist: 'Tài khoản hoặc mật khẩu không tồn tại',
   errorInCreateAccount: 'Đã xảy ra lỗi trong quá trình tạo tài khoản, vui lòng thử lại',
   userIsNotAllowedToPerformAction: 'Bạn không có quyền thực hiện hành động này',
-  internalServerError: 'Internal Server Error',
+  internalServerError: 'Đã có lỗi xảy ra, vui lòng thử lại sau',
   databaseNotInitialize: 'Database not initialized',
   errorInUserService: 'Error in user-service',
   invalidRole: 'Quyền không phù hợp',
