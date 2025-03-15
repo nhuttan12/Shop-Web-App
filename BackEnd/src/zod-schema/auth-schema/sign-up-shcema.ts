@@ -7,7 +7,7 @@ export const signUpSchema = z
     username: z.string().min(3, errorMessage.usernameHaveAtLeast3Character),
     email: z.string().email(errorMessage.emailIsNotValid),
     password: z.string().min(6, errorMessage.passwordHasAtLeast6Character),
-    retypePassword: z.string().min(6),
+    retypePassword: z.string(),
   })
   .superRefine((data, ctx) => {
     //Checking password and retypePassword are same
