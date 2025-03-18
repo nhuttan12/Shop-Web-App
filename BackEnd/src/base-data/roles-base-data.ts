@@ -2,7 +2,7 @@ import logger from '../utils/logger.js';
 import { Role } from '../entities/Role.js';
 import { Status } from '../entities/Status.js';
 import { ErrorHandler } from '../utils/error-handling.js';
-import { errorMessage } from '../utils/message/error-message.js';
+import { messageLog } from '../utils/message/message-log.js';
 
 export class RolesBaseData {
   async insertBaseRoleData() {
@@ -11,13 +11,10 @@ export class RolesBaseData {
       name: 'Active',
     });
 
-    logger.debug(errorMessage.activeStatusNotFound);
+    logger.debug(messageLog.activeStatusNotFound);
     if (!activeStatus) {
-      logger.error(errorMessage.activeStatusNotFound);
-      throw new ErrorHandler(
-        errorMessage.activeStatusNotFound,
-        404
-      );
+      logger.error(messageLog.activeStatusNotFound);
+      throw new ErrorHandler(messageLog.activeStatusNotFound, 404);
     }
 
     // logger.silly('Base data for inserting into roles table');

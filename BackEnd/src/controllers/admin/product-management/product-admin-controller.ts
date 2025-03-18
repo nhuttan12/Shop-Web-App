@@ -4,6 +4,7 @@ import { ErrorHandler } from '../../../utils/error-handling.js';
 import { ProductService } from '../../../services/admin/products-service/product-service.js';
 import { errorMessage } from '../../../utils/message/error-message.js';
 import { notifyMessage } from '../../../utils/message/notify-message.js';
+import { messageLog } from '../../../utils/message/message-log.js';
 
 export class ProductAdminController {
   static async getProducts(req: Request, res: Response, next: NextFunction) {
@@ -20,7 +21,7 @@ export class ProductAdminController {
       res.status(200).json(result);
     } catch (error) {
       logger.error(
-        errorMessage.errorInProductAdminController + ' getProducts function:',
+        messageLog.errorInProductAdminController + ' getProducts function:',
         error
       );
       next(error);
@@ -57,7 +58,7 @@ export class ProductAdminController {
       }
     } catch (error) {
       logger.error(
-        errorMessage.errorInProductAdminController + ' AddProduct function:',
+        messageLog.errorInProductAdminController + ' AddProduct function:',
         error
       );
       next(new ErrorHandler(errorMessage.errorInAddProduct, 500));
@@ -87,7 +88,7 @@ export class ProductAdminController {
       res.status(200).json(result);
     } catch (error) {
       logger.error(
-        errorMessage.errorInProductAdminController + ' getProductById function: ',
+        messageLog.errorInProductAdminController + ' getProductById function: ',
         error
       );
       next(error);
@@ -117,7 +118,7 @@ export class ProductAdminController {
       res.status(200).json(result);
     } catch (error) {
       logger.error(
-        errorMessage.errorInProductAdminController + ' getProductByName function: ',
+        messageLog.errorInProductAdminController + ' getProductByName function: ',
         error
       );
       next(error);
@@ -143,7 +144,7 @@ export class ProductAdminController {
       res.status(200).json({message: notifyMessage.productDeleteSuccess});
     } catch (error) {
       logger.error(
-        errorMessage.errorInProductAdminController + ' deleteProduct function: ',
+        messageLog.errorInProductAdminController + ' deleteProduct function: ',
         error
       );
       next(error);

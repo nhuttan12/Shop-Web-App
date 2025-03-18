@@ -1,10 +1,10 @@
-import { Like } from 'typeorm';
 import { ProductAdminDTO } from '../../../dtos/admin/product-admin-dto.js';
 import { Product } from '../../../entities/Product.js';
 import { ErrorHandler } from '../../../utils/error-handling.js';
 import logger from '../../../utils/logger.js';
 import { Status } from '../../../entities/Status.js';
 import { errorMessage } from '../../../utils/message/error-message.js';
+import { messageLog } from '../../../utils/message/message-log.js';
 
 export class ProductService {
   static async getProducts(page: number, limit: number) {
@@ -26,7 +26,7 @@ export class ProductService {
       //loop through users array and convert all elements to productDTO objects
       logger.silly('Convert all elements to userDTO objects');
       const productDTO: ProductAdminDTO[] = [];
-      products.forEach(product => {
+      products.forEach((product) => {
         productDTO.push(ProductAdminDTO.fromEntity(product));
       });
 
@@ -42,7 +42,7 @@ export class ProductService {
       };
     } catch (error) {
       logger.error(
-        errorMessage.errorInproductService + ' getProducts function',
+        messageLog.errorInproductService + ' getProducts function',
         error
       );
       throw new ErrorHandler(errorMessage.errorInGetAllProducts, 500);
@@ -72,7 +72,7 @@ export class ProductService {
       //loop through users array and convert all elements to productDTO objects
       logger.silly('Convert all elements to userDTO objects');
       const productDTO: ProductAdminDTO[] = [];
-      products.forEach(product => {
+      products.forEach((product) => {
         productDTO.push(ProductAdminDTO.fromEntity(product));
       });
 
@@ -88,7 +88,7 @@ export class ProductService {
       };
     } catch (error) {
       logger.error(
-        errorMessage.errorInproductService + ' getProductById function',
+        messageLog.errorInproductService + ' getProductById function',
         error
       );
       throw new ErrorHandler(errorMessage.errorInGetProductById, 500);
@@ -114,11 +114,11 @@ export class ProductService {
           .take(limit)
           .getManyAndCount();
       logger.debug(`Get products list and total ${total}`);
-      
+
       //loop through users array and convert all elements to productDTO objects
       logger.silly('Convert all elements to userDTO objects');
       const productDTO: ProductAdminDTO[] = [];
-      products.forEach(product => {
+      products.forEach((product) => {
         productDTO.push(ProductAdminDTO.fromEntity(product));
       });
 
@@ -134,7 +134,7 @@ export class ProductService {
       };
     } catch (error) {
       logger.error(
-        errorMessage.errorInproductService + ' getProductByName function',
+        messageLog.errorInproductService + ' getProductByName function',
         error
       );
       throw new ErrorHandler(errorMessage.errorInGetProductByName, 500);
@@ -174,7 +174,7 @@ export class ProductService {
       logger.debug('Status updated');
     } catch (error) {
       logger.error(
-        errorMessage.errorInproductService + ' deleteProduct function',
+        messageLog.errorInproductService + ' deleteProduct function',
         error
       );
       throw new ErrorHandler(errorMessage.errorInDeleteProduct, 500);

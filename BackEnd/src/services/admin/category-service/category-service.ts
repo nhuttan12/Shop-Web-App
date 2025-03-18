@@ -3,6 +3,7 @@ import { Category } from '../../../entities/Category.js';
 import { ErrorHandler } from '../../../utils/error-handling.js';
 import logger from '../../../utils/logger.js';
 import { errorMessage } from '../../../utils/message/error-message.js';
+import { messageLog } from '../../../utils/message/message-log.js';
 
 export class CategoryService {
   static getCateories = async (page: number, limit: number) => {
@@ -39,7 +40,7 @@ export class CategoryService {
       };
     } catch (error) {
       logger.error(
-        errorMessage.errorInproductService + ` ${this.getCateories.name} function:`,
+        messageLog.errorInproductService + ` ${this.getCateories.name} function:`,
         error
       );
       throw new ErrorHandler(errorMessage.errorInGetAllCategories, 500);
@@ -84,7 +85,7 @@ export class CategoryService {
       };
     } catch (error) {
       logger.error(
-        errorMessage.errorInproductService + ` ${this.getCategoryById.name} function:`,
+        messageLog.errorInproductService + ` ${this.getCategoryById.name} function:`,
         error
       );
       throw new ErrorHandler(errorMessage.errorInGetAllCategories, 500);
@@ -129,7 +130,7 @@ export class CategoryService {
       };
     } catch (error) {
       logger.error(
-        errorMessage.errorInproductService + ` ${this.getCategoryByName.name} function`,
+        messageLog.errorInproductService + ` ${this.getCategoryByName.name} function`,
         error
       );
       throw new ErrorHandler(errorMessage.errorInGetCategoryByName, 500);

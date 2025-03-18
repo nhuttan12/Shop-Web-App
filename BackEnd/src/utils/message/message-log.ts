@@ -1,0 +1,17 @@
+export const messageLog={
+  accountIsSignUp: 'A account is signing up',
+  databaseNotInitialize: 'Database not initialized',
+  errorInUserService: 'Error in user-service',
+  activeStatusNotFound: 'Active status not found in database. Ensure status data is seeded first.',
+  errorInProductAdminController: 'Error in ProductAdminController',
+  errorInCategoryAdminController: 'Error in ProductAdminController',
+  errorInUserAdminController: 'Error in User Admin Controller',
+  errorInproductService: 'Error in Product Service',
+  tokenRefreshedSuccessful: 'Token refresh successful',
+  databaseInitialize: 'Database initialized',
+  chekcingActiveStatusExist: 'Check active status exists',
+  errorInSignUpController: 'Error in sign-up-controller',
+  dataMissingInRequiredFields: 'Data missing required fields',
+  invalidUserId :'Invalid user id',
+  nameIsNull: 'Name is null',
+}

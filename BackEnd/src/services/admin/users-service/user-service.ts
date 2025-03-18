@@ -9,6 +9,7 @@ import {
   UserUpdateInput,
   userUpdateSchema,
 } from '../../../zod-schema/admin/user-schema.js';
+import { messageLog } from '../../../utils/message/message-log.js';
 
 export class UserService {
   static async getUsers(page: number, limit: number) {
@@ -29,7 +30,7 @@ export class UserService {
       //loop through users array and convert all elements to userDTO objects
       logger.silly('Convert all elements to userDTO objects');
       const userDTO: UserDTO[] = [];
-      users.forEach(user => {
+      users.forEach((user) => {
         userDTO.push(UserDTO.fromEntity(user));
       });
 
@@ -45,7 +46,7 @@ export class UserService {
       };
     } catch (error) {
       logger.error(
-        errorMessage.errorInUserService + ' get users function',
+        messageLog.errorInUserService + ' get users function',
         error
       );
       throw new ErrorHandler(errorMessage.errorInGetUsersInfo, 500);
@@ -83,7 +84,7 @@ export class UserService {
       //loop through users array and convert all elements to userDTO objects
       logger.silly('Convert all elements to userDTO objects');
       const userDTO: UserDTO[] = [];
-      users.forEach(user => {
+      users.forEach((user) => {
         userDTO.push(UserDTO.fromEntity(user));
       });
 
@@ -99,7 +100,7 @@ export class UserService {
       };
     } catch (error) {
       logger.error(
-        errorMessage.errorInUserService + ' get userById function:',
+        messageLog.errorInUserService + ' get userById function:',
         error
       );
       throw new ErrorHandler(errorMessage.errorInGetUserInfoById, 500);
@@ -137,7 +138,7 @@ export class UserService {
       //loop through users array and convert all elements to userDTO objects
       logger.silly('Convert all elements to userDTO objects');
       const userDTO: UserDTO[] = [];
-      users.forEach(user => {
+      users.forEach((user) => {
         userDTO.push(UserDTO.fromEntity(user));
       });
 
@@ -153,7 +154,7 @@ export class UserService {
       };
     } catch (error) {
       logger.error(
-        errorMessage.errorInUserService + ' get getUserByName function:',
+        messageLog.errorInUserService + ' get getUserByName function:',
         error
       );
       throw new ErrorHandler(errorMessage.errorInGetUserInfoById, 500);
@@ -209,7 +210,7 @@ export class UserService {
         .execute();
     } catch (error) {
       logger.error(
-        errorMessage.errorInUserService + ' updateUser function:',
+        messageLog.errorInUserService + ' updateUser function:',
         error
       );
       throw new ErrorHandler(errorMessage.errorInUpdateUserInfo, 500);
@@ -248,7 +249,7 @@ export class UserService {
         .where('id= :id', { id })
         .execute();
     } catch (error) {
-      logger.error(errorMessage.errorInUserService + ' banUser function', error);
+      logger.error(messageLog.errorInUserService + ' banUser function', error);
       throw new ErrorHandler(errorMessage.errorInBanUserBaseOnId, 500);
     }
   }

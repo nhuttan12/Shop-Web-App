@@ -5,6 +5,7 @@ import { ErrorHandler } from '../../../utils/error-handling.js';
 import logger from '../../../utils/logger.js';
 import { errorMessage } from '../../../utils/message/error-message.js';
 import { notifyMessage } from '../../../utils/message/notify-message.js';
+import { messageLog } from '../../../utils/message/message-log.js';
 
 export class UserController {
   static async getUsers(req: Request, res: Response, next: NextFunction) {
@@ -25,7 +26,7 @@ export class UserController {
       res.status(200).json(users);
     } catch (error) {
       logger.error(
-        errorMessage.errorInUserAdminController + ' getUsers function',
+        messageLog.errorInUserAdminController + ' getUsers function',
         error
       );
       next(error);
@@ -60,7 +61,7 @@ export class UserController {
       res.status(200).json(users);
     } catch (error) {
       logger.error(
-        errorMessage.errorInUserAdminController + ' getUserById function:',
+        messageLog.errorInUserAdminController + ' getUserById function:',
         error
       );
       next(error);
@@ -80,7 +81,7 @@ export class UserController {
 
       //check user name is existing
       if(!name){
-        logger.error('Name is null');
+        logger.error(messageLog.nameIsNull);
         throw new ErrorHandler(errorMessage.dataInvalid, 400); //data missing required fields
       }
 
@@ -95,7 +96,7 @@ export class UserController {
       res.status(200).json(users);
     } catch (error) {
       logger.error(
-        errorMessage.errorInUserAdminController + ' getUserByName function:',
+        messageLog.errorInUserAdminController + ` ${this.getUserByName.name} function:`,
         error
       );
       next(error);
@@ -110,7 +111,7 @@ export class UserController {
 
       //Checking id is number
       if (isNaN(id)) {
-        logger.error(`Invalid user id ${id}`);
+        logger.error(`${messageLog.invalidUserId} ${id}`);
         throw new ErrorHandler(errorMessage.invalidUserId, 400);
       }
 
@@ -122,7 +123,7 @@ export class UserController {
 
       //check if all required fields are provided
       if (!name || !password || !role || !status) {
-        logger.error('Data missing required fields');
+        logger.error(messageLog.dataMissingInRequiredFields);
         throw new ErrorHandler(errorMessage.dataInvalid, 400);
       }
 
@@ -144,7 +145,7 @@ export class UserController {
       }
     } catch (error) {
       logger.error(
-        errorMessage.errorInUserAdminController + ' updateUser function: ',
+        messageLog.errorInUserAdminController + ` ${this.updateUser.name}`,
         error
       );
       next(error);
@@ -173,7 +174,7 @@ export class UserController {
       }
     } catch (error) {
       logger.error(
-        errorMessage.errorInUserAdminController + ' banUser function',
+        messageLog.errorInUserAdminController + ` ${this.banUser.name}`,
         error
       );
       next(error);

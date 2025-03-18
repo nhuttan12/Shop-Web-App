@@ -3,14 +3,15 @@ import logger from '../../../utils/logger.js';
 import { CategoryService } from '../../../services/admin/category-service/category-service.js';
 import { errorMessage } from '../../../utils/message/error-message.js';
 import { ErrorHandler } from '../../../utils/error-handling.js';
+import { messageLog } from '../../../utils/message/message-log.js';
 
 export class CategoryAdminController {
   static async getCategories(req: Request, res: Response, next: NextFunction) {
+    let page: number = 1, limit: number = 10;
     try {
       //get page from request
-      const page: number = Number(req.params.page) || 1;
-      const limit: number = 10;
-      logger.debug('page: ' + page + ' limit: ' + limit);
+      page = Number(req.params.page);
+      logger.debug(`page: ${page} limit: ${limit}`);
 
       //get users from UserService and send response to client
       const result = await CategoryService.getCateories(page, limit);
@@ -19,10 +20,12 @@ export class CategoryAdminController {
       res.status(200).json(result);
     } catch (error) {
       logger.error(
-        `${errorMessage.errorInCategoryAdminController} ${CategoryAdminController.getCategories.name} function:`,
+        `${messageLog.errorInCategoryAdminController} ${CategoryAdminController.getCategories.name} function:`,
         error
       );
       next(error);
+    } finally {
+      logger.info('')
     }
   }
 
@@ -54,10 +57,12 @@ export class CategoryAdminController {
       res.status(200).json(result);
     } catch (error) {
       logger.error(
-        `${errorMessage.errorInCategoryAdminController} ${CategoryAdminController.getCategories.name} function:`,
+        `${messageLog.errorInCategoryAdminController} ${CategoryAdminController.getCategories.name} function:`,
         error
       );
       next(error);
+    } finally {
+
     }
   }
 
@@ -85,7 +90,7 @@ static async getCategoryByName(req: Request, res: Response, next: NextFunction) 
       res.status(200).json(result);
     } catch (error) {
       logger.error(
-        errorMessage.errorInProductAdminController + ` ${this.getCategoryByName.name} function:`,
+        messageLog.errorInProductAdminController + ` ${this.getCategoryByName.name} function:`,
         error
       );
       next(error);
