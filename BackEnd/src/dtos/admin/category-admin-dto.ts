@@ -1,6 +1,6 @@
-import { Category } from './../../entities/Category';
 import { Expose, plainToInstance } from 'class-transformer';
 import { StatusDTO } from '../status-dto.js';
+import { Category } from '../../entities/Category.js';
 
 export class CategoryAdminDTO {
   @Expose()
