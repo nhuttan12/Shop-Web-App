@@ -1,7 +1,6 @@
-import { format } from 'winston';
 //import library
 import 'reflect-metadata';
-import express, { Application, NextFunction, Request, Response } from 'express';
+import express, { Application } from 'express';
 import bodyParser from 'body-parser';
 import passport from 'passport';
 import cors from 'cors';
@@ -15,9 +14,9 @@ import { authRoute } from './routes/user/auth-route.js';
 import { manageUserRoute } from './routes/admin/user-route.js';
 import { StatusBaseData } from './base-data/status-base-data.js';
 import { RolesBaseData } from './base-data/roles-base-data.js';
-import { errorMessage } from './utils/message/error-message.js';
-import { notifyMessage } from './utils/message/notify-message.js';
 import { CloudinaryStorageRoute } from './routes/cloudinary/cloudinary-route.js';
+import { globalExceptionHandler } from './middleware/global-exception-handler.js';
+import { messageLog } from './utils/message/message-log.js';
 
 const app: Application = express();
 
@@ -44,21 +43,7 @@ app.use('/auth/v2', manageUserRoute);
 app.use('/uploads', CloudinaryStorageRoute);
 
 //config for global exception handler
-app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-  logger.error('Error message:', err.message);
-  if (err.isOperational) {
-    logger.error('Error message is operational:', err.message);
-    res.status(err.statusCode).json({
-      status: err.status,
-      message: err.message
-    });
-  } else {
-    logger.error(`Global error in app.ts: ${err}`);
-    res
-      .status(500)
-      .json({ status: 500, message: errorMessage.internalServerError });
-  }
-});
+app.use(globalExceptionHandler);
 
 //start server
 const startServer = async (): Promise<void> => {
@@ -70,7 +55,7 @@ const startServer = async (): Promise<void> => {
     const roleBaseData = new RolesBaseData();
 
     await AppDataSource.initialize();
-    logger.silly(notifyMessage.databaseInitialize + ' in app.ts');
+    logger.silly(messageLog.databaseInitialize + ' in app.ts');
 
     logger.silly('Insert base data in tables before starting server.');
     await statusBaseData.insertBaseStatusData();
