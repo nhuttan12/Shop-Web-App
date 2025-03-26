@@ -2,9 +2,23 @@ import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import { join } from 'path';
 
-import { env } from '../environment/env.js';
+import { env } from './env.js';
 import logger from '../utils/logger.js';
-import { messageLog } from '../utils/message-handling.js';
+import { notifyMessage } from '../utils/message/notify-message.js';
+import { errorMessage } from '../utils/message/error-message.js';
+import { messageLog } from '../utils/message/message-log.js';
+
+const entitiesSrc: string[] = [join(process.cwd(), 'src', 'entities', '*.ts')];
+const migrationsSrc: string[] = [
+  join(process.cwd(), 'src', 'migrations', '*.ts'),
+];
+
+const entitiesDist: string[] = [
+  join(process.cwd(), 'dist', 'entities', '*.js'),
+];
+const migrationsDist: string[] = [
+  join(process.cwd(), 'dist', 'migrations', '*.js'),
+];
 
 export const AppDataSource = new DataSource({
   type: env.DB_DIALECT as 'mysql' | 'postgres' | 'sqlite' | 'mssql',
@@ -16,8 +30,8 @@ export const AppDataSource = new DataSource({
   dropSchema: false,
   synchronize: false,
   logging: true,
-  entities: [join(process.cwd(), 'src', 'entities', '*.ts')],
-  migrations: [join(process.cwd(), 'src', 'migrations', '*.ts')],
+  entities: env.STATUS === 'production' ? entitiesDist : entitiesSrc,
+  migrations: env.STATUS === 'production' ? migrationsDist : migrationsSrc,
   subscribers: [],
   extra: {
     connectionLimit: 10,

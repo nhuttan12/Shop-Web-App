@@ -3,11 +3,11 @@ import passport from 'passport';
 import { ExtractJwt, Strategy as JwtStrategy } from 'passport-jwt';
 import { Strategy as LocalStrategy } from 'passport-local';
 
-import { env } from '../environment/env.js';
+import { env } from '../configs/env.js';
 import { User } from '../entities/User.js';
 import logger from './logger.js';
-import { messageLog } from './message-handling.js';
 import { UserDTO } from '../dtos/user-dto.js';
+import { errorMessage } from './message/error-message.js';
 
 //config for passport local authentication
 passport.use(
@@ -30,12 +30,12 @@ passport.use(
         //Check if user exists
         if (!user) {
           logger.info('User not found');
-          return done(null, false, { message: messageLog.userNotExist });
+          return done(null, false, { message: errorMessage.userNotExist });
         }
 
         if (user.status.name === 'Banned') {
           logger.info('User is banned');
-          return done(null, false, { message: messageLog.userBanned });
+          return done(null, false, { message: errorMessage.userBanned });
         }
 
         //Check if user password is matches
@@ -46,7 +46,7 @@ passport.use(
         if (!isMatch) {
           logger.info('Password is incorrect');
           return done(null, false, {
-            message: messageLog.invalidUsernameOrPassword,
+            message: errorMessage.invalidUsernameOrPassword,
           });
         }
 
@@ -85,7 +85,7 @@ passport.use(
       //Checking user is null
       if (!user) {
         logger.info('User not found');
-        return done(null, false, { message: messageLog.userNotExist });
+        return done(null, false, { message: errorMessage.userNotExist });
       }
 
       //Convert to uset DTO
@@ -100,10 +100,10 @@ passport.use(
         logger.silly('Checking user status is banned');
         if (userDTO.status.name.toLowerCase() === 'banned') {
           logger.silly('User is banned');
-          return done(null, false, { message: messageLog.userBanned });
+          return done(null, false, { message: errorMessage.userBanned });
         } else if (userDTO.status.name.toLocaleLowerCase() !== 'active') {
           logger.silly('User is not active');
-          return done(null, false, { message: messageLog.userNotActive });
+          return done(null, false, { message: errorMessage.userNotActive });
         } else {
           logger.silly('Returning user');
           return done(null, userDTO);
